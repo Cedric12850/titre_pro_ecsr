@@ -1,0 +1,57 @@
+{% extends "home/base.html" %}
+{% load static %}
+{% block content %}
+<h1>Personnaliser {{ theme }}</h1>
+
+  
+  <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+    <section class="row">
+      <article class="col-6">
+        <h2>Blocs de contenu</h2>
+        <div id="contentblock-formset">
+          {{ contentblock_formset.management_form }}
+          {% for form in contentblock_formset %}
+            <div class="contentblock-form">
+              {% for field in form.visible_fields %}
+                {% if field.name != 'DELETE' %}
+                  <p>{{ field.label_tag }} {{ field }}</p>
+                {% endif %}
+              {% endfor %}
+              {% if contentblock_formset.can_delete and form.DELETE %}
+                <label>Supprimer : {{ form.DELETE }}</label>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" id="add-contentblock">Ajouter un bloc</button>
+      </article>
+
+      <article class="col-6">
+        <h2>Réglementations</h2>
+        <div id="reglementation-formset">
+          {{ reglementation_formset.management_form }}
+          {% for form in reglementation_formset %}
+            <div class="reglementation-form">
+              {% for field in form.visible_fields %}
+                {% if field.name != 'DELETE' %}
+                  <p>{{ field.label_tag }} {{ field }}</p>
+                {% endif %}
+              {% endfor %}
+              {% if reglementation_formset.can_delete and form.DELETE %}
+                <label>Supprimer : {{ form.DELETE }}</label>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" id="add-reglementation">Ajouter une réglementation</button>
+
+        <hr>
+        <button type="submit">Enregistrer</button>
+      </article>
+    </section>
+  </form>
+  
+
+<script src="{% static 'script.js' %}"></script>
+{% endblock %}

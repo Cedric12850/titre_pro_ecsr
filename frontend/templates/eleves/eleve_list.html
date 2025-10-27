@@ -1,0 +1,22 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<h1>Liste des élèves</h1>
+<div class="mb-3">
+  <a href="{% url 'eleves:eleve-create' %}" class="btn btn-primary">
+    Ajouter un élève
+  </a>
+</div>
+<ul>
+  {% for eleve in eleves %}
+    <li>
+      <a href="{% url 'eleves:eleve-detail' eleve.pk %}">
+        {{ eleve.prenom }} {{ eleve.nom }}
+      </a>
+    </li>
+  {% empty %}
+    <li>Aucun élève enregistré.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

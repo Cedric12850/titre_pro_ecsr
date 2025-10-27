@@ -1,0 +1,88 @@
+{% extends "home/base.html" %}
+{% block content %}
+  <h1>{{ theme }}</h1>
+
+  <p>
+    <a href="{% url 'themes:theme-customize' theme.slug %}" class="btn btn-primary">
+      Personnaliser le thème
+    </a>
+  </p>
+
+  <section>
+    <h2>Contenu du thème</h2>
+    {% for block in content_blocks %}
+      <article>
+        {% if block.title %}<h3>{{ block.title }}</h3>{% endif %}
+        {% if block.image %}
+          <img src="{{ block.image.url }}" alt="Image pour {{ block.title|default:'ce bloc' }}">
+        {% endif %}
+        <p>{{ block.texte }}</p>
+      </article>
+    {% empty %}
+      <p>Aucun contenu disponible pour ce thème.</p>
+    {% endfor %}
+  </section>
+
+  <section>
+    <h2>Réglementation</h2>
+   
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Article</th>
+      <th scope="col">Contenu</th>
+      <th scope="col">Amende</th>
+      <th scope="col">Retrait de points</th>
+      <th scope="col">Sanctions</th>
+      <th scope="col">Peines complémentaires</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for reg in reglementations %}
+    <tr>
+      <th scope="row">{{ reg.lettre }} {{ reg.numero_article }}</th>
+      <td>{{ reg.contenu }}</td>
+      <td>{% if reg.amende %}{{ reg.amende }} {% else %}-{% endif %}</td>
+      <td>{% if reg.retrait_points %}{{ reg.retrait_points }} pts{% else %}-{% endif %}</td>
+      <td>
+        <ul class="mb-0">
+          {% for sanction in reg.sanctions.all %}
+            {% if not sanction.complementaire %}
+              <li>
+                {{ sanction.libelle }} {% if sanction.duree %} - {{ sanction.duree }}{% endif %}
+              </li>
+            {% endif %}
+          {% endfor %}
+          {% if not reg.sanctions.all|length %}
+            -
+          {% endif %}
+        </ul>
+      </td>
+      <td>
+        <ul class="mb-0">
+          {% for sanction in reg.sanctions.all %}
+            {% if sanction.complementaire %}
+              <li>
+                {{ sanction.libelle }}{% if sanction.duree %} - {{ sanction.duree }}{% endif %}
+              </li>
+            {% endif %}
+          {% endfor %}
+          {% if not reg.sanctions.all|length %}
+            -
+          {% endif %}
+        </ul>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="6" class="text-center">Aucune réglementation associée à ce thème.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+    <p>
+        <a href="{% url 'themes:theme-list' %}">← Retour à la liste des thèmes</a>
+    </p>
+  </section>
+{% endblock %}

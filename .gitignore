@@ -1,0 +1,36 @@
+# Fichiers Python
+__pycache__/
+*.pyc
+*.py[cod]
+*.egg
+*.egg-info/
+*.log
+
+# Virtualenv
+.env
+.env.*
+.venv
+env/
+venv/
+ENV/
+
+# Django
+*.sqlite3db.sqlite3
+/media/
+staticfiles/
+*.pot
+*.pyc
+
+# IDE / Éditeur
+.vscode/
+.idea/
+
+# Node / Frontend
+node_modules/
+frontend/static/js/
+frontend/static/css/
+dist/
+
+# Pyenv / Poetry
+.poetry/
+.pyenv/

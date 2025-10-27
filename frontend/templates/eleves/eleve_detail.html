@@ -1,0 +1,80 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<h1>{{ eleve.prenom }} {{ eleve.nom }}</h1>
+
+<section aria-labelledby="eleve-info">
+  <h2 id="eleve-info">Informations de l’élève</h2>
+  <dl class="row">
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">{{ eleve.email|default:"Non renseigné" }}</dd>
+
+    <dt class="col-sm-3">Téléphone</dt>
+    <dd class="col-sm-9">{{ eleve.telephone|default:"Non renseigné" }}</dd>
+
+    <dt class="col-sm-3">Date d'inscription</dt>
+    <dd class="col-sm-9">{{ eleve.date_inscription }}</dd>
+  </dl>
+</section>
+
+<section aria-labelledby="eleve-progression" class="mt-4">
+  <h2 id="eleve-progression">Progression</h2>
+
+  {% if progressions %}
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <caption class="sr-only">Fiche de suivi des cours de {{ eleve.prenom }} {{ eleve.nom }}</caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Date du cours</th>
+            <th scope="col">Heure</th>
+            <th scope="col">Compétence</th>
+            <th scope="col">Commentaire</th>
+            <th scope="col">Validé</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prog in progressions %}
+          <tr>
+            <td>{{ prog.date_cours }}</td>
+            <td>
+              {% if prog.heure_cours %}
+                {{ prog.heure_cours|time:"H:i" }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>
+              {% if prog.competence %}
+                {{ prog.competence }}
+              {% else %}
+                Pas encore implémenter
+              {% endif %}
+            </td>
+            <td>{{ prog.commentaire|default:"Aucun commentaire"|safe }}</td>
+            <td>
+              {% if prog.valide %}
+                <span class="text-success" aria-label="Validé">✅</span>
+              {% else %}
+                <span class="text-danger" aria-label="Non validé">❌</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'eleves:progression-update' eleve.id prog.id %}" class="btn btn-sm btn-warning">
+                Modifier
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>Aucune progression enregistrée.</p>
+  {% endif %}
+</section>
+<a href="{% url 'eleves:progression-create' eleve.pk %}" class="btn btn-primary mt-3">
+  Ajouter un commentaire
+</a>
+
+{% endblock %}

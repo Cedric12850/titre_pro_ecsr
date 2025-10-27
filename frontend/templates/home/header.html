@@ -1,0 +1,19 @@
+{% load static %}
+<header role="banner">
+    <h1>
+        <a href="/" title="Page d'accueil de ECSR.fr"><img src="{% static 'img/logo_ecfpro.png' %}" alt="Logo du site" width="150"></a>
+    </h1>
+    <nav role="navigation" aria-label="Menu principal">
+        <ul>
+            <li><a href="/" aria-current="{% if request.path == '/' %}page{% endif %}">Accueil</a></li>
+            <li><a href="{% url 'themes:theme-list' %}" aria-current="{% if request.path == '/themes/list/' %}page{% endif %}">Les 57 thèmes</a></li>
+            <li><a href="/" aria-current="false">Le titre pro ECSR</a></li>
+            <li><a href="/" aria-current="false">La réglementation routière</a></li> 
+            <li><a href="/" aria-current="false">La trame pédagogique</a></li>
+            <li><a href="{% url 'eleves:eleve-list' %}" aria-current="{% if request.path == '/eleves/' %}page{% endif %}">Eleve test</a></li>
+            <li><a href="http://localhost:8000/admin/" target="_blank" >Admin</a></li>
+            
+        </ul>
+    </nav>
+    <hr />
+</header>
