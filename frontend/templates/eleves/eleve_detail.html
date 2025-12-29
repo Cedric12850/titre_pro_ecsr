@@ -76,5 +76,10 @@
 <a href="{% url 'eleves:progression-create' eleve.pk %}" class="btn btn-primary mt-3">
   Ajouter un commentaire
 </a>
+<a
+  href="{% url 'eleves:eleve-progression-pdf' eleve.pk %}" class="btn btn-outline-secondary mt-3" target="_blank">
+  Télécharger en PDF
+</a>
+
 
 {% endblock %}

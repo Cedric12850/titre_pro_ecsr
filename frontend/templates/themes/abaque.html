@@ -1,0 +1,47 @@
+{% extends "home/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Abaque de Devilliers</h1>
+    <p class="text-center">Calcule la <strong>distance</strong> et la <strong>durée</strong> de freinage selon la vitesse et l’adhérence.</p>
+
+    <div class="card shadow p-4 mx-auto" style="max-width: 600px;">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Vitesse (km/h)</label>
+                <input type="number" name="vitesse" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Coefficient d’adhérence</label>
+                <select name="mu" class="form-select" required>
+                    <option value="0.9">Asphalte propre sec (µ = 0.9)</option>
+                    <option value="0.8">Asphalte sec (µ = 0.8)</option>
+                    <option value="0.7">Revêtement moyen sec (µ = 0.7)</option>
+                    <option value="0.5">Pavé sec (µ = 0.5)</option>
+                    <option value="0.4">Revêtement humide (µ = 0.4)</option>
+                    <option value="0.3">Pavé mouillé (µ = 0.3)</option>
+                    <option value="0.2">Asphalte boueux (µ = 0.2)</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-3" type="submit">Calculer</button>
+        </form>
+    </div>
+
+    {% if result %}
+    <div class="card shadow p-4 mx-auto mt-4 text-center" style="max-width: 600px;">
+        <h4>Résultats</h4>
+        <p><strong>Vitesse :</strong> {{ result.vitesse }} km/h</p>
+        <p><strong>Coefficient d’adhérence :</strong> µ = {{ result.mu }}</p>
+        <hr>
+        <p><strong>Distance de freinage :</strong> {{ result.distance }} m</p>
+        <p><strong>Durée de freinage :</strong> {{ result.duree }} s</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

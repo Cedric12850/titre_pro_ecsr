@@ -17,7 +17,9 @@
     {# Skip link pour aller directement au contenu principal #}
     <a href="#main-content" class="visually-hidden visually-hidden-focusable">Aller au contenu</a>
 
+    {% if not hide_header %}
     {% include "home/header.html" %}
+{% endif %}
 
     <main class="container" id="main-content" role="main" tabindex="-1">
         {% block content %}
@@ -25,7 +27,8 @@
         
     </main>
 
-    {% include "home/footer.html" %}
+    <!--{% include "home/footer.html" %} -->
+    {% block show_footer %}{% include "home/footer.html" %}{% endblock %}
 
     <script src="{% static 'js/script.js' %}"></script>
     <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>

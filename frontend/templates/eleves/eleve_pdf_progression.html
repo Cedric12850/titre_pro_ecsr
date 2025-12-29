@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Progression de {{ eleve.prenom }} {{ eleve.nom }}</title>
+
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #000;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-top: 25px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+
+        dl {
+            margin: 0;
+        }
+
+        dt {
+            font-weight: bold;
+            float: left;
+            width: 30%;
+        }
+
+        dd {
+            margin-left: 32%;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 6px;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            text-align: left;
+        }
+
+        .valide {
+            color: green;
+            font-weight: bold;
+        }
+
+        .non-valide {
+            color: red;
+            font-weight: bold;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 1cm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 9px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Fiche de suivi pédagogique</h1>
+
+<section>
+    <h2>Informations de l’élève</h2>
+    <dl>
+        <dt>Nom</dt>
+        <dd>{{ eleve.nom }}</dd>
+
+        <dt>Prénom</dt>
+        <dd>{{ eleve.prenom }}</dd>
+
+        <dt>Email</dt>
+        <dd>{{ eleve.email|default:"Non renseigné" }}</dd>
+
+        <dt>Téléphone</dt>
+        <dd>{{ eleve.telephone|default:"Non renseigné" }}</dd>
+
+        <dt>Date d’inscription</dt>
+        <dd>{{ eleve.date_inscription }}</dd>
+    </dl>
+</section>
+
+<section>
+    <h2>Progression</h2>
+
+    {% if progressions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Heure</th>
+                    <th>Compétence</th>
+                    <th>Commentaire</th>
+                    <th>Validé</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prog in progressions %}
+                <tr>
+                    <td>{{ prog.date_cours }}</td>
+                    <td>
+                        {% if prog.heure_cours %}
+                            {{ prog.heure_cours|time:"H:i" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ prog.competence|default:"Non renseignée" }}
+                    </td>
+                    <td>
+                        {{ prog.commentaire|default:"Aucun commentaire"|safe }}
+                    </td>
+                    <td>
+                        {% if prog.valide %}
+                            <span class="valide">Oui</span>
+                        {% else %}
+                            <span class="non-valide">Non</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucune progression enregistrée.</p>
+    {% endif %}
+</section>
+
+<footer>
+    Document généré le {{ date }} — Centre de formation à la sécurité routière
+</footer>
+
+</body>
+</html>

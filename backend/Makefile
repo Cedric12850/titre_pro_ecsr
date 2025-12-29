@@ -46,3 +46,23 @@ reset:
 
 # Installer toutes les dépendances et CKEditor d'un coup
 setup: init check-ckeditor migrate
+
+# Créer une nouvelle application Django (compatible Windows & Linux)
+app:
+ifeq ($(OS),Windows_NT)
+	@if ("$(name)"=="") { \
+		Write-Host "❌ Erreur : vous devez spécifier un nom d'application. Exemple : make app name=conduite"; \
+	} else { \
+		Write-Host "📁 Création de l'application Django : $(name)"; \
+		$(PYTHON) manage.py startapp $(name); \
+		Write-Host "✅ Application $(name) créée dans backend/$(name)"; \
+	}
+else
+	@if [ -z "$(name)" ]; then \
+		echo "❌ Erreur : vous devez spécifier un nom d'application. Exemple : make app name=conduite"; \
+	else \
+		echo "📁 Création de l'application Django : $(name)"; \
+		$(PYTHON) manage.py startapp $(name); \
+		echo "✅ Application $(name) créée dans backend/$(name)"; \
+	fi
+endif

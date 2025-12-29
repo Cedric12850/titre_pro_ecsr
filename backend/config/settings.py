@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 #import dotenv
 #dotenv.load_dotenv()
 # import pymysql
@@ -59,22 +62,31 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        #'NAME': os.getenv('MYSQL_DB'),
-        #'USER': os.getenv('MYSQL_USER'),
-        #'PASSWORD': os.getenv('MYSQL_PASSWORD'),
-        'NAME': 'titre_pro_ecsr',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': os.getenv('DB_ENGINE'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
-    # Pour SQLite (optionnel)
-    # 'default': {
-    #    'ENGINE': 'django.db.backends.sqlite3',
-    #    'NAME': BASE_DIR / 'db.sqlite3',
-    # }
 }
+        #pour windows + Laragon
+        #'ENGINE': 'django.db.backends.mysql',
+        ##'NAME': os.getenv('MYSQL_DB'),
+        ##'USER': os.getenv('MYSQL_USER'),
+        ##'PASSWORD': os.getenv('MYSQL_PASSWORD'),
+        #'NAME': 'titre_pro_ecsr',
+        #'USER': 'root',
+        #'PASSWORD': '',
+        #'HOST': '127.0.0.1',
+        #'PORT': '3306',
+    
+        # Pour SQLite (optionnel)
+        # 'default': {
+        #    'ENGINE': 'django.db.backends.sqlite3',
+        #    'NAME': BASE_DIR / 'db.sqlite3',
+        # }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},

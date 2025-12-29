@@ -3,6 +3,11 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .forms import EleveForm, ProgressionForm
 from .models import Eleve, Progression
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from datetime import date
+
 
 class EleveListView(ListView):
     model = Eleve
@@ -56,3 +61,24 @@ class ProgressionUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy("eleves:eleve-detail", kwargs={"pk": self.object.eleve.pk})
+    
+def eleve_progression_pdf(request, pk):
+    eleve = Eleve.objects.get(pk=pk)
+    progressions = eleve.progressions.all().order_by("date_cours", "heure_cours")
+
+    html_string = render_to_string(
+        "eleves/eleve_pdf_progression.html",
+        {
+            "eleve": eleve,
+            "progressions": progressions,
+            "date": date.today(),
+        }
+    )
+
+    pdf = HTML(string=html_string).write_pdf()
+
+    response = HttpResponse(pdf, content_type="application/pdf")
+    response["Content-Disposition"] = (
+        f'inline; filename="progression_{eleve.nom}_{eleve.prenom}.pdf"'
+    )
+    return response

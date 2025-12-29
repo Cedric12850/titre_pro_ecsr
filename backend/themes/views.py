@@ -117,3 +117,19 @@ class ThemeCustomizeView(View):
             'reglementation_formset': reglementation_formset,
         })
         
+def abaque_devilliers(request):
+    result = None
+    if request.method == "POST":
+        vitesse = float(request.POST.get("vitesse"))
+        mu = float(request.POST.get("mu"))
+        g = 9.81
+        v_ms = vitesse / 3.6  # conversion km/h -> m/s
+        distance = (v_ms ** 2) / (2 * g * mu)
+        duree = v_ms / (g * mu)
+        result = {
+            "vitesse": vitesse,
+            "mu": mu,
+            "distance": round(distance, 2),
+            "duree": round(duree, 2),
+        }
+    return render(request, "themes/abaque.html", {"result": result})
