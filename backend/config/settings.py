@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'home',
     'themes',
     'eleves',
+    'mindmap',
 ]
 
 MIDDLEWARE = [

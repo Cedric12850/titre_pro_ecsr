@@ -1,0 +1,80 @@
+{% extends "home/base.html" %}
+{% load static %}
+
+{% block title %}Carte mentale{% endblock %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <!-- Barre d'outils -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <!-- Titre de la carte -->
+        <input
+            type="text"
+            name="title"
+            id="mindmap_title"
+            class="form-control me-3"
+            placeholder="Titre de la carte"
+            value="{{ object.title|default:'Nouvelle carte' }}"
+            required
+        >
+
+        <!-- Boutons et personnalisation -->
+        <div class="btn-group d-flex align-items-center">
+
+            <div class="d-flex align-items-center me-3">
+                <label class="me-2">Couleur nœud:</label>
+                <input type="color" id="node_color" value="#ddddff" class="me-3">
+
+                <label class="me-2">Couleur texte:</label>
+                <input type="color" id="text_color" value="#000000" class="me-3">
+
+                <label class="me-2">Couleur lien:</label>
+                <input type="color" id="line_color" value="#337ab7" class="me-3">
+
+                <label class="me-2">Épaisseur lien:</label>
+                <input type="number" id="line_width" value="2" min="1" max="10" class="me-3">
+            </div>
+
+            <button type="button" id="add_node_btn" class="btn btn-success me-1">
+                ➕ Ajouter un nœud
+            </button>
+
+            <button type="submit" id="save_btn" class="btn btn-primary me-1">
+                💾 Enregistrer
+            </button>
+
+            <a href="{% url 'mindmap:mindmap-list' %}" class="btn btn-secondary">
+                Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Champ caché pour stocker le JSON -->
+    <input type="hidden" name="data" id="mindmap_data">
+
+    <!-- Container jsMind -->
+    <div id="jsmind_container"
+         style="width:100%; height:600px; border:1px solid #ccc;">
+    </div>
+
+</form>
+
+<!-- Injection des données JSON existantes -->
+{% if object %}
+    {{ object.data|json_script:"mind_data" }}
+{% else %}
+    <script id="mind_data" type="application/json">{}</script>
+{% endif %}
+
+{% endblock content %}
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsmind/style/jsmind.css">
+<script src="https://cdn.jsdelivr.net/npm/jsmind/js/jsmind.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsmind/js/jsmind.draggable.js"></script>
+<script src="{% static 'mindmap/script.js' %}"></script>
+{% endblock extra_js %}

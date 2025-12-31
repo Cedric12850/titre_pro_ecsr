@@ -1,0 +1,32 @@
+{% extends "home/base.html" %}
+
+{% block title %}Cartes mentales{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Cartes mentales</h1>
+    <a href="{% url 'mindmap:mindmap-create' %}" class="btn btn-primary">
+        Nouvelle carte
+    </a>
+</div>
+
+{% if mindmaps %}
+    <ul class="list-group">
+        {% for map in mindmaps %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'mindmap:mindmap-edit' map.pk %}">
+                    {{ map.title }}
+                </a>
+                <a href="{% url 'mindmap:mindmap-delete' map.pk %}"
+                   class="btn btn-danger btn-sm">
+                    Supprimer
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucune carte mentale pour le moment.</p>
+{% endif %}
+
+{% endblock %}

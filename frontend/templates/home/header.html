@@ -1,6 +1,6 @@
 {% load static %}
 <header role="banner">
-    <h1>
+    <!--<h1>
         <a href="/" title="Page d'accueil de ECSR.fr"><img src="{% static 'img/logo_ecfpro.png' %}" alt="Logo du site" width="150"></a>
     </h1>
     <nav role="navigation" aria-label="Menu principal">
@@ -11,10 +11,52 @@
             <li><a href="/" aria-current="false">La réglementation routière</a></li> 
             <li><a href="/" aria-current="false">La trame pédagogique</a></li>
             <li><a href="/themes/abaque/" aria-current="false">Abaque de Devilliers</a></li>
+            <li><a href="{% url 'mindmap:mindmap-list' %}" aria-current="{% if request.path == '/mindmap/' %}page{% endif %}">Mindmap</a></li>
             <li><a href="{% url 'eleves:eleve-list' %}" aria-current="{% if request.path == '/eleves/' %}page{% endif %}">Eleve test</a></li>
             <li><a href="http://localhost:8000/admin/" target="_blank" >Admin</a></li>
             
         </ul>
-    </nav>
+    </nav> !-->
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/" title="Page d'accueil de ECSR.fr"><img src="{% static 'img/logo_ecfpro.png' %}" alt="Logo du site" width="150"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/" aria-current="{% if request.path == '/' %}page{% endif %}">Accueil</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'themes:theme-list' %}" aria-current="{% if request.path == '/themes/list/' %}page{% endif %}">Les 57 thèmes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/" aria-current="false">Le titre pro ECSR</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/" aria-current="false">La réglementation routière</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/" aria-current="false">La trame pédagogique</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'eleves:eleve-list' %}" aria-current="{% if request.path == '/eleves/' %}page{% endif %}">Eleve test</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Outils
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/themes/abaque/" aria-current="false">Abaque de Devilliers</a></li>
+            <li><a class="dropdown-item" href="{% url 'mindmap:mindmap-list' %}" aria-current="{% if request.path == '/mindmap/' %}page{% endif %}">Mindmap</a></li>
+            <li><a class="dropdown-item" href="http://localhost:8000/admin/" target="_blank" >Admin</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
     <hr />
 </header>

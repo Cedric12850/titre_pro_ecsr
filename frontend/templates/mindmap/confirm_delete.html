@@ -1,0 +1,11 @@
+{% extends "home/base.html" %}
+{% block title %}Supprimer la carte{% endblock %}
+
+{% block content %}
+<h2>Supprimer "{{ object.title }}" ?</h2>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+    <a href="{% url 'mindmap:mindmap-list' %}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}
