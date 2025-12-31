@@ -1,22 +1,49 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-<h1>Liste des élèves</h1>
-<div class="mb-3">
-  <a href="{% url 'eleves:eleve-create' %}" class="btn btn-primary">
-    Ajouter un élève
-  </a>
+
+<div class="container mt-3">
+
+  <!-- Ligne titre + tri -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Liste des élèves</h1>
+
+    <div style="min-width: 220px;"> <!-- pour que le select ne soit pas trop petit -->
+      <form method="get" class="d-flex align-items-center">
+        <label for="sort" class="me-2 mb-0"></label>
+        <select name="sort" id="sort" class="form-select" onchange="this.form.submit()">
+          <option value="nom_asc" {% if request.GET.sort == "nom_asc" %}selected{% endif %}>Nom A → Z</option>
+          <option value="nom_desc" {% if request.GET.sort == "nom_desc" %}selected{% endif %}>Nom Z → A</option>
+          <option value="date_asc" {% if request.GET.sort == "date_asc" %}selected{% endif %}>Inscription : ancien → récent</option>
+          <option value="date_desc" {% if request.GET.sort == "date_desc" %}selected{% endif %}>Inscription : récent → ancien</option>
+        </select>
+      </form>
+    </div>
+  </div>
+
+  <!-- Grille des cards -->
+  <div class="row g-3">
+    {% for eleve in eleves %}
+    <div class="col-sm-6 col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ eleve.prenom }} {{ eleve.nom }}</h5>
+          <h6 class="card-subtitle mb-2 text-body-secondary">neph: {{ eleve.neph }}</h6>
+          <ul class="card-text mb-2">
+            <li>Tel: {{ eleve.telephone }}</li>
+            <li>Email: {{ eleve.email }}</li>
+            <li>Inscrit(e) depuis le: {{ eleve.date_inscription }}</li>
+          </ul>
+          <a href="{% url 'eleves:eleve-detail' eleve.pk %}" class="btn btn-primary btn-sm">Suivi pédagogique</a>
+          <a href="{% url 'eleves:eleve-delete' eleve.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p>Aucun élève enregistré.</p>
+    {% endfor %}
+  </div>
+
 </div>
-<ul>
-  {% for eleve in eleves %}
-    <li>
-      <a href="{% url 'eleves:eleve-detail' eleve.pk %}">
-        {{ eleve.prenom }} {{ eleve.nom }}
-      </a>
-    </li>
-  {% empty %}
-    <li>Aucun élève enregistré.</li>
-  {% endfor %}
-</ul>
 
 {% endblock %}

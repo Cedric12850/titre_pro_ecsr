@@ -1,0 +1,14 @@
+{% extends "home/base.html" %}
+
+{% block title %}Supprimer l'élève{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Voulez-vous vraiment supprimer {{ object.prenom }} {{ object.nom }} ?</h3>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+        <a href="{% url 'eleves:eleve-list' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .forms import EleveForm, ProgressionForm
 from .models import Eleve, Progression
 from django.http import HttpResponse
@@ -13,6 +13,19 @@ class EleveListView(ListView):
     model = Eleve
     template_name = 'eleves/eleve_list.html'
     context_object_name = 'eleves'
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        sort = self.request.GET.get('sort', 'nom_asc')  # valeur par défaut
+        if sort == 'nom_asc':
+            qs = qs.order_by('nom', 'prenom')
+        elif sort == 'nom_desc':
+            qs = qs.order_by('-nom', '-prenom')
+        elif sort == 'date_asc':
+            qs = qs.order_by('date_inscription')
+        elif sort == 'date_desc':
+            qs = qs.order_by('-date_inscription')
+        return qs
 
 
 class EleveDetailView(DetailView):
@@ -31,6 +44,11 @@ class EleveCreateView(CreateView):
     model = Eleve
     form_class = EleveForm
     template_name = 'eleves/eleve_form.html'
+    success_url = reverse_lazy('eleves:eleve-list')
+    
+class EleveDeleteView(DeleteView):
+    model = Eleve
+    template_name = 'eleves/eleve_confirm_delete.html'  # page de confirmation
     success_url = reverse_lazy('eleves:eleve-list')
 
 

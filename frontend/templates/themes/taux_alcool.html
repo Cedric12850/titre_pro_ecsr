@@ -1,0 +1,55 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Calcul du taux d'alcool (Widmark)</h1>
+
+    <form method="post" class="row g-3">
+        {% csrf_token %}
+
+        <div class="col-md-3">
+            <label class="form-label">Masse corporelle (kg)</label>
+            <input type="number" step="0.1" name="masse" class="form-control" required>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Sexe</label>
+            <select name="sexe" class="form-select" required>
+                <option value="homme">Homme</option>
+                <option value="femme">Femme</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Nombre de verres consommés (dose bar)</label>
+            <input type="number" step="0.1" name="nb_verres" class="form-control" required>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Taux d’élimination (g/L/h)</label>
+            <input type="number" step="0.01" name="beta" class="form-control" value="0.15">
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Calculer</button>
+        </div>
+    </form>
+
+    {% if result %}
+    <div class="alert alert-info mt-4">
+        {% if result.error %}
+            {{ result.error }}
+        {% else %}
+            <p><strong>Taux d'alcool estimé :</strong> {{ result.TA }} g/L</p>
+            <p><strong>Temps estimé pour éliminer tout l'alcool :</strong> {{ result.temps_elimination }} h</p>
+            <ul>
+                <li>Masse : {{ result.masse }} kg</li>
+                <li>Sexe : {{ result.sexe }}</li>
+                <li>Nombre de verres : {{ result.nb_verres }}</li>
+                <li>Taux d’élimination : {{ result.beta }} g/L/h</li>
+            </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

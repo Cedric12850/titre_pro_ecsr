@@ -1,9 +1,63 @@
 {% extends 'home/base.html' %}
 
+{% block title %}Accueil - ECSR{% endblock %}
+
 {% block content %}
+<div class="container mt-5">
 
+    <!-- En-tête -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Bienvenue sur le portail ECSR</h1>
+        <p class="lead">Outils et ressources pour les formateurs en sécurité routière</p>
+    </div>
 
-    <h2>Page d'accueil</h2>
-        
+    <!-- Section Suivi pédagogique -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Suivi pédagogique des élèves</h3>
+                    <p class="card-text">Accédez à la liste complète des élèves, consultez leur progression, leurs évaluations et l’ensemble de leurs suivis pédagogiques au centre de formation.</p>
+                    <a href="{% url 'eleves:eleve-list' %}" class="btn btn-primary">Voir les élèves</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Section Outils et supports -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Outils et supports pédagogiques</h3>
+                    <p class="card-text">Accédez aux outils interactifs tels que les abaques, calculs, cartes mentales et autres supports liés aux 57 thèmes de la sécurité routière.</p>
+                    <a href="{% url 'themes:theme-list' %}" class="btn btn-primary">Explorer les outils</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Réglementation -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Réglementation et cadre ECSR</h3>
+                    <p class="card-text">Consultez l’ensemble de la réglementation routière applicable, ainsi que le cadre légal et professionnel du titre professionnel Enseignant de la Conduite et de la Sécurité Routière.</p>
+                    <a href="/" class="btn btn-primary">Voir la réglementation</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section informations complémentaires -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="alert alert-secondary text-center" role="alert">
+                <strong>Note :</strong> Ce portail est réservé aux formateurs ECSR et est strictement destiné à un usage interne dans le cadre de la formation.
+            </div>
+        </div>
+    </div>
+
+</div>
 {% endblock %}
