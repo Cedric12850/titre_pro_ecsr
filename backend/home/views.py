@@ -25,3 +25,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+def conditions_generales_view(request):
+    return render(request, "home/conditions_generales.html")
