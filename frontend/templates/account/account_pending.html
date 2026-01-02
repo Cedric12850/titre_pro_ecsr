@@ -1,0 +1,23 @@
+{% extends "home/base.html" %}
+{% block title %}Compte en attente{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+
+    <h1 class="mb-3">Compte en attente de validation</h1>
+
+    <p class="lead">
+        Votre compte a bien été créé, mais doit être validé par l’administrateur
+        avant de pouvoir accéder au site.
+    </p>
+
+    <p class="text-muted">
+        Vous recevrez une confirmation dès que votre compte sera activé.
+    </p>
+
+    <a href="{% url 'account:login' %}" class="btn btn-outline-primary mt-3">
+        Retour à la connexion
+    </a>
+
+</div>
+{% endblock %}

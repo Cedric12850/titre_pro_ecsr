@@ -1,22 +1,31 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .forms import EleveForm, ProgressionForm
-from .models import Eleve, Progression
+from django.views.generic import (
+    ListView, DetailView, CreateView, UpdateView, DeleteView
+)
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+
 from weasyprint import HTML
 from datetime import date
 
+from account.mixins import RoleRequiredMixin
 
-class EleveListView(ListView):
+from .forms import EleveForm, ProgressionForm
+from .models import Eleve, Progression
+
+
+
+class EleveListView(RoleRequiredMixin, ListView):
     model = Eleve
     template_name = 'eleves/eleve_list.html'
     context_object_name = 'eleves'
-    
+    allowed_roles = ["ADMIN", "FORMATEUR"]
+
     def get_queryset(self):
         qs = super().get_queryset()
-        sort = self.request.GET.get('sort', 'nom_asc')  # valeur par défaut
+        sort = self.request.GET.get('sort', 'nom_asc')
+
         if sort == 'nom_asc':
             qs = qs.order_by('nom', 'prenom')
         elif sort == 'nom_desc':
@@ -25,63 +34,76 @@ class EleveListView(ListView):
             qs = qs.order_by('date_inscription')
         elif sort == 'date_desc':
             qs = qs.order_by('-date_inscription')
+
         return qs
 
 
-class EleveDetailView(DetailView):
+class EleveDetailView(RoleRequiredMixin, DetailView):
     model = Eleve
     template_name = 'eleves/eleve_detail.html'
     context_object_name = 'eleve'
+    allowed_roles = ["ADMIN", "FORMATEUR"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # On ajoute toutes les progressions de l'élève courant
         context['progressions'] = self.object.progressions.all()
         return context
+
     
 
-class EleveCreateView(CreateView):
+class EleveCreateView(RoleRequiredMixin, CreateView):
     model = Eleve
     form_class = EleveForm
     template_name = 'eleves/eleve_form.html'
     success_url = reverse_lazy('eleves:eleve-list')
+    allowed_roles = ["ADMIN", "FORMATEUR"]
+
     
-class EleveDeleteView(DeleteView):
+class EleveDeleteView(RoleRequiredMixin, DeleteView):
     model = Eleve
-    template_name = 'eleves/eleve_confirm_delete.html'  # page de confirmation
+    template_name = 'eleves/eleve_confirm_delete.html'
     success_url = reverse_lazy('eleves:eleve-list')
+    allowed_roles = ["ADMIN"]
 
 
-class ProgressionCreateView(CreateView):
+class ProgressionCreateView(RoleRequiredMixin, CreateView):
     model = Progression
     form_class = ProgressionForm
     template_name = 'eleves/progression_form.html'
+    allowed_roles = ["FORMATEUR"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        eleve = Eleve.objects.get(pk=self.kwargs.get('pk'))
-        context['eleve'] = eleve
+        context['eleve'] = get_object_or_404(Eleve, pk=self.kwargs['pk'])
         return context
 
     def form_valid(self, form):
-        # associer automatiquement la progression à l'élève
-        eleve = Eleve.objects.get(pk=self.kwargs.get('pk'))
-        form.instance.eleve = eleve
+        form.instance.eleve = get_object_or_404(Eleve, pk=self.kwargs['pk'])
         return super().form_valid(form)
-    
-    def get_success_url(self):
-        return reverse_lazy("eleves:eleve-detail", kwargs={"pk": self.kwargs["pk"]})
 
-class ProgressionUpdateView(UpdateView):
+    def get_success_url(self):
+        return reverse_lazy(
+            "eleves:eleve-detail",
+            kwargs={"pk": self.kwargs["pk"]}
+        )
+
+class ProgressionUpdateView(RoleRequiredMixin, UpdateView):
     model = Progression
     form_class = ProgressionForm
     template_name = 'eleves/progression_form.html'
+    allowed_roles = ["FORMATEUR"]
 
     def get_success_url(self):
-        return reverse_lazy("eleves:eleve-detail", kwargs={"pk": self.object.eleve.pk})
+        return reverse_lazy(
+            "eleves:eleve-detail",
+            kwargs={"pk": self.object.eleve.pk}
+        )
     
 def eleve_progression_pdf(request, pk):
-    eleve = Eleve.objects.get(pk=pk)
+    if not request.user.is_authenticated or request.user.role not in ["ADMIN", "FORMATEUR"]:
+        return HttpResponse("Accès refusé", status=403)
+
+    eleve = get_object_or_404(Eleve, pk=pk)
     progressions = eleve.progressions.all().order_by("date_cours", "heure_cours")
 
     html_string = render_to_string(
@@ -100,3 +122,4 @@ def eleve_progression_pdf(request, pk):
         f'inline; filename="progression_{eleve.nom}_{eleve.prenom}.pdf"'
     )
     return response
+

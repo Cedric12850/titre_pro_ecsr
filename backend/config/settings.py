@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'themes',
     'eleves',
     'mindmap',
+    "account",
 ]
 
 MIDDLEWARE = [
@@ -95,6 +96,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
+
+AUTH_USER_MODEL = "account.User"
+
+LOGIN_URL = "account:login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "account:login"
 
 LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'UTC'

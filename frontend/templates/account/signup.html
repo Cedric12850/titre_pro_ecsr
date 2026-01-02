@@ -1,0 +1,28 @@
+{% extends "home/base.html" %}
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 500px;">
+
+    <h1 class="text-center mb-4">Demande d’inscription</h1>
+
+    <div class="alert alert-info">
+        L’accès au site est soumis à validation par l’administrateur.
+    </div>
+
+    <form method="post" class="card p-4 shadow-sm">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-success w-100">
+            Envoyer la demande
+        </button>
+    </form>
+
+    <p class="text-center mt-3">
+        Déjà inscrit ?
+        <a href="{% url 'account:login' %}">Se connecter</a>
+    </p>
+
+</div>
+{% endblock %}

@@ -81,7 +81,7 @@ class Reglementation(models.Model):
     contenu = models.TextField()
     amende = models.TextField(blank=True, null=True)
     retrait_points = models.PositiveIntegerField(default=0)
-    sanctions = models.ManyToManyField('Sanction', blank=True, null=True, related_name="reglementations")
+    sanctions = models.ManyToManyField('Sanction', blank=True, related_name="reglementations")
 
     def __str__(self):
         return f"Article {self.lettre} {self.numero_article}"

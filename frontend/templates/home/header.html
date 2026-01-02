@@ -25,38 +25,89 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+      <!-- Menu principal -->
       <ul class="navbar-nav">
+
         <li class="nav-item">
-          <a class="nav-link" href="/" aria-current="{% if request.path == '/' %}page{% endif %}">Accueil</a>
+          <a class="nav-link" href="/" aria-current="{% if request.path == '/' %}page{% endif %}">
+            Accueil
+          </a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'themes:theme-list' %}" aria-current="{% if request.path == '/themes/list/' %}page{% endif %}">Les 57 thèmes</a>
+          <a class="nav-link" href="{% url 'themes:theme-list' %}">
+            Les 57 thèmes
+          </a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link" href="/" aria-current="false">Le titre pro ECSR</a>
+          <a class="nav-link" href="#">Le titre pro ECSR</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link" href="/" aria-current="false">La réglementation routière</a>
+          <a class="nav-link" href="#">La réglementation routière</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link" href="/" aria-current="false">La trame pédagogique</a>
+          <a class="nav-link" href="#">La trame pédagogique</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'eleves:eleve-list' %}" aria-current="{% if request.path == '/eleves/' %}page{% endif %}">Eleve test</a>
+          <a class="nav-link" href="{% url 'eleves:eleve-list' %}">
+            Élèves
+          </a>
         </li>
+
+        <!-- Dropdown outils -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
             Outils
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/themes/abaque/" aria-current="false">Abaque de Devilliers</a></li>
-            <li><a class="dropdown-item" href="/themes/taux_alcool/" aria-current="false">Formule de Widmark</a></li>
-            <li><a class="dropdown-item" href="{% url 'mindmap:mindmap-list' %}" aria-current="{% if request.path == '/mindmap/' %}page{% endif %}">Mindmap</a></li>
-            <li><a class="dropdown-item" href="http://localhost:8000/admin/" target="_blank" >Admin</a></li>
+            <li><a class="dropdown-item" href="/themes/abaque/">Abaque de Devilliers</a></li>
+            <li><a class="dropdown-item" href="/themes/taux_alcool/">Formule de Widmark</a></li>
+            <li><a class="dropdown-item" href="{% url 'mindmap:mindmap-list' %}">Mindmap</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/admin/" target="_blank">Administration</a></li>
           </ul>
         </li>
+
       </ul>
+
+      <!-- Zone utilisateur (à droite) -->
+      <ul class="navbar-nav ms-auto">
+
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <span class="nav-link disabled">
+              👤 {{ user.get_full_name|default:user.email }}
+            </span>
+          </li>
+
+          <li class="nav-item">
+            <form method="post" action="{% url 'account:logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="nav-link btn btn-link text-danger" style="display:inline; padding:0; border:none; background:none;">
+                Déconnexion
+              </button>
+            </form>
+          </li>
+
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account:login' %}">Connexion</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account:signup' %}">Inscription</a>
+          </li>
+        {% endif %}
+
+      </ul>
+
     </div>
+
   </div>
 </nav>
     <hr />

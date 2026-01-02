@@ -25,6 +25,8 @@ urlpatterns = [
     path('themes/', include('themes.urls')),
     path('eleves/', include('eleves.urls')),
     path('mindmap/', include('mindmap.urls')),
+    path("account/", include("account.urls")),
+
     ]
 
 if settings.DEBUG:
