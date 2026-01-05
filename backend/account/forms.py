@@ -3,19 +3,22 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import User
 
 class RegisterForm(UserCreationForm):
+
     class Meta:
         model = User
         fields = [
             "first_name",
             "last_name",
             "email",
-            "role",
             "password1",
             "password2",
         ]
 
     def clean_password1(self):
         password = self.cleaned_data.get("password1")
+
+        if not password:
+            return password
 
         if len(password) < 12:
             raise forms.ValidationError(

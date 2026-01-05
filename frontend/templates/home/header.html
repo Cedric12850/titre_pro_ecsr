@@ -1,4 +1,5 @@
 {% load static %}
+{% load roles %}
 <header role="banner">
     <!--<h1>
         <a href="/" title="Page d'accueil de ECSR.fr"><img src="{% static 'img/logo_ecfpro.png' %}" alt="Logo du site" width="150"></a>
@@ -68,8 +69,10 @@
             <li><a class="dropdown-item" href="/themes/abaque/">Abaque de Devilliers</a></li>
             <li><a class="dropdown-item" href="/themes/taux_alcool/">Formule de Widmark</a></li>
             <li><a class="dropdown-item" href="{% url 'mindmap:mindmap-list' %}">Mindmap</a></li>
+            {% if user|has_role:"ADMIN" %}
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="/admin/" target="_blank">Administration</a></li>
+            {% endif %}
           </ul>
         </li>
 

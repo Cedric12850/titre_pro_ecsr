@@ -1,7 +1,11 @@
 # account/views.py
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.mail import send_mail
+
+from account.models import User
 from .forms import RegisterForm
 
 def login_view(request):
@@ -34,21 +38,36 @@ def login_view(request):
 def signup_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
+
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_approved = False  # compte non validé par l'admin
+            user.is_active = False
+            user.role = User.ROLE_STAGIAIRE  # ou la valeur correcte
             user.save()
 
-            # Message flash pour informer l'utilisateur
-            messages.success(
-                request,
-                "Votre compte a été créé avec succès ! Il sera activé après validation par l'administrateur."
+
+            # Email de notification (admin ou utilisateur)
+            send_mail(
+                subject="Nouvelle inscription ECSR",
+                message=(
+                    f"Bonjour,\n\n"
+                    f"Un nouveau compte vient d’être créé.\n\n"
+                    f"Nom : {user.get_full_name()}\n"
+                    f"Email : {user.email}\n"
+                    f"Rôle : {user.role}\n\n"
+                    f"Merci de valider le compte dans l’administration."
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=["admin@ecsr.fr"],  # ou user.email
+                fail_silently=False,
             )
 
-            # Optionnel : envoyer un email à l'admin pour validation
-            # send_mail(subject, message, from_email, [admin_email], ...)
-
+            messages.success(
+                request,
+                "Votre compte a bien été créé. Il est en attente de validation par un administrateur."
+            )
             return redirect("account:login")
+
     else:
         form = RegisterForm()
 

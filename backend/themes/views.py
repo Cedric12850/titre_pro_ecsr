@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import CreateView, ListView, DetailView
 from django.urls import reverse_lazy
+
+from account.mixins import RoleRequiredMixin
 from .models import Categorie, ContentBlock, Reglementation, Theme
 from .forms import ContentBlockFormSet, ReglementationFormSet, ThemeForm
 
@@ -60,7 +62,8 @@ class ThemeDetailView(DetailView):
         context['reglementations'] = self.object.reglementations.all()
         return context
     
-class ThemeCustomizeView(View):
+class ThemeCustomizeView(RoleRequiredMixin, View):
+    allowed_roles = ["ADMIN", "FORMATEUR"]
     def get(self, request, slug):
         theme = get_object_or_404(Theme, slug=slug)
         contentblock_formset = ContentBlockFormSet(

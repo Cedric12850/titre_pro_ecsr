@@ -128,3 +128,6 @@ CKEDITOR_CONFIGS = {
         'toolbarCanCollapse': True,  # permet de réduire/étendre la toolbar
     },
 }
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@ecsr.fr"

@@ -20,7 +20,7 @@ class EleveListView(RoleRequiredMixin, ListView):
     model = Eleve
     template_name = 'eleves/eleve_list.html'
     context_object_name = 'eleves'
-    allowed_roles = ["ADMIN", "FORMATEUR"]
+    allowed_roles = ["ADMIN", "FORMATEUR", "STAGIAIRE"]
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -42,7 +42,7 @@ class EleveDetailView(RoleRequiredMixin, DetailView):
     model = Eleve
     template_name = 'eleves/eleve_detail.html'
     context_object_name = 'eleve'
-    allowed_roles = ["ADMIN", "FORMATEUR"]
+    allowed_roles = ["ADMIN", "FORMATEUR","STAGIAIRE"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -70,7 +70,7 @@ class ProgressionCreateView(RoleRequiredMixin, CreateView):
     model = Progression
     form_class = ProgressionForm
     template_name = 'eleves/progression_form.html'
-    allowed_roles = ["FORMATEUR"]
+    allowed_roles = ["ADMIN", "FORMATEUR","STAGIAIRE"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -91,7 +91,7 @@ class ProgressionUpdateView(RoleRequiredMixin, UpdateView):
     model = Progression
     form_class = ProgressionForm
     template_name = 'eleves/progression_form.html'
-    allowed_roles = ["FORMATEUR"]
+    allowed_roles = ["ADMIN", "FORMATEUR","STAGIAIRE"]
 
     def get_success_url(self):
         return reverse_lazy(

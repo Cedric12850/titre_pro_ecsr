@@ -1,6 +1,9 @@
 {% extends 'home/base.html' %}
+{% load static %}
+{% load roles %}
 
 {% block content %}
+{% if user|has_any_role:"ADMIN,FORMATEUR" %}
   <h2>🎲 Choix du thème et du stagiaire</h2>
 
   <form method="get">
@@ -28,7 +31,7 @@
       <strong>{{ eleve_aleatoire.prenom }} {{ eleve_aleatoire.nom }}</strong>
     </div>
   {% endif %}
-
+{% endif %}
   <h2>Liste des 57 thèmes</h2>
 
     <h3>Filtrer par catégorie:</h3>
