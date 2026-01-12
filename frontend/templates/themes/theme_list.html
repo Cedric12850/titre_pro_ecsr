@@ -39,7 +39,10 @@
       <!-- Filtres principaux (exclusifs) -->
         <div class="btn-group mb-3" id="primary-filter" role="group">
           <button class="btn btn-outline-primary active" data-filter="*">Tous</button>
-          <button class="btn btn-outline-primary" data-filter=".cat-permis">Permis</button>
+          {% for categorie in categories %}
+        <button class="btn btn-outline-primary" data-filter=".cat-{{ categorie.name|slugify }}">{{ categorie.name }}</button>
+        {% endfor %}
+          <!-- <button class="btn btn-outline-primary" data-filter=".cat-permis">Permis</button>
           <button class="btn btn-outline-primary" data-filter=".cat-circulation">Circulation</button>
           <button class="btn btn-outline-primary" data-filter=".cat-reglementation">Réglementation</button>
           <button class="btn btn-outline-primary" data-filter=".cat-signalisation">Signalisation</button>
@@ -48,19 +51,19 @@
           <button class="btn btn-outline-primary" data-filter=".cat-psychoactif">Psychoactif</button>
           <button class="btn btn-outline-primary" data-filter=".cat-vitesse">Vitesse</button>
           <button class="btn btn-outline-primary" data-filter=".cat-partage-social">Partage social</button>
-          <button class="btn btn-outline-primary" data-filter=".cat-biomecanique">Biomécanique</button>
+          <button class="btn btn-outline-primary" data-filter=".cat-biomecanique">Biomécanique</button> -->
         </div>
 
-    <h3>Filtrer par tags:</h3>
-      <!-- Filtres secondaires (multiples combinés) -->
+    <!-- <h3>Filtrer par tags:</h3> 
+      Filtres secondaires (multiples combinés)
       <div class="d-flex flex-wrap gap-2 mb-3" id="secondary-filter" role="group">
         {% for categorie in categories %}
         <button class="btn btn-outline-warning" data-filter=".tag-{{ categorie.name|slugify }}">{{ categorie.name }}</button>
         {% endfor %}
         <button class="btn btn-outline-danger" id="clear-tags">Désactiver les tags</button>
         
-        <!-- Ajoute autant de filtres secondaires que nécessaire -->
-      </div>
+        Ajoute autant de filtres secondaires que nécessaire 
+       </div> -->
 
       <!-- Grille des thèmes -->
       <div class="row grid" id="theme-container">

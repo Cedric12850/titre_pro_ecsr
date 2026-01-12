@@ -1,3 +1,6 @@
+# ─────────────────────────────
+# Variables globales
+# ─────────────────────────────
 ifeq ($(OS),Windows_NT)
     PYTHON = env/Scripts/python.exe
     ACTIVATE = env\Scripts\activate
@@ -12,42 +15,66 @@ endif
 
 PIP = $(PYTHON) -m pip
 
+# ─────────────────────────────
 # Initialisation de l'environnement virtuel et installation des dépendances
+# ─────────────────────────────
 init:
-	python -m venv env
+ifeq ($(OS),Windows_NT)
+	py -3.11 -m venv env
+else
+	python3.11 -m venv env
+endif
 	$(PIP) install --upgrade pip setuptools wheel
 	$(PIP) install -r requirements.txt
 
+# ─────────────────────────────
 # Vérifier que CKEditor est installé (ou l’installer)
+# ─────────────────────────────
 check-ckeditor:
 	$(PIP) show django-ckeditor || $(PIP) install django-ckeditor==6.3.1
 
-# Lancer le serveur
+# ─────────────────────────────
+# Lancer le serveur Django
+# ─────────────────────────────
 run:
 	$(PYTHON) manage.py runserver
 
-# Migration
+# ─────────────────────────────
+# Migrations
+# ─────────────────────────────
 migration:
 	$(PYTHON) manage.py makemigrations
+
 migrate:
 	$(PYTHON) manage.py migrate
 
+# ─────────────────────────────
 # Créer un super utilisateur
+# ─────────────────────────────
 createsuperuser:
 	$(PYTHON) manage.py createsuperuser
 
+# ─────────────────────────────
 # Nettoyage des __pycache__
+# ─────────────────────────────
 clean:
 	$(FIND)
 
+# ─────────────────────────────
 # Supprimer l'environnement virtuel
+# ─────────────────────────────
 reset:
 	$(RM) env
 
+# ─────────────────────────────
 # Installer toutes les dépendances et CKEditor d'un coup
+# ─────────────────────────────
 setup: init check-ckeditor migrate
 
+# ─────────────────────────────
 # Créer une nouvelle application Django (compatible Windows & Linux)
+# Utiliser : make app name=nom_app
+# ─────────────────────────────
 app:
 ifeq ($(OS),Windows_NT)
 	@if ("$(name)"=="") { \
