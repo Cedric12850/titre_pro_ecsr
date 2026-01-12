@@ -1,7 +1,8 @@
 import os
 # from dotenv import load_dotenv
 # load_dotenv()
-
+import pymysql
+pymysql.install_as_MySQLdb()
 import dotenv
 from pathlib import Path
 dotenv.load_dotenv()
@@ -72,14 +73,11 @@ DATABASES = {
 
         # pour windows + Laragon
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQL_DB'),
-        'USER': os.getenv('MYSQL_USER'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD'),
-        'NAME': 'titre_pro_ecsr',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': os.getenv('MYSQL_DB', 'titre_pro_ecsr'),
+        'USER': os.getenv('MYSQL_USER', 'user'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'password'),
+        'HOST': os.getenv('MYSQL_HOST', 'db'),
+        'PORT': os.getenv('MYSQL_PORT', '3306'),
 }    
         # Pour SQLite (optionnel)
         # 'default': {
