@@ -7,7 +7,7 @@ WEB_SERVICE = web
 DB_SERVICE = db
 
 # Commande compose
-DC = docker compose
+DC = docker compose -f ../docker-compose.yml
 
 # -------------------------------
 # Initialisation : build + up en arrière-plan
@@ -22,7 +22,7 @@ init:
 # -------------------------------
 run:
 	@echo "▶️ Démarrage du serveur Django..."
-	$(DC) up $(WEB_SERVICE)
+	$(DC) up
 
 # -------------------------------
 # Accéder au shell Django
