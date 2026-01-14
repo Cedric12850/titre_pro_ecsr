@@ -1,56 +1,115 @@
 {% extends "home/base.html" %}
 {% block content %}
-<h1>Personnaliser {{ theme }}</h1>
 
-  
+<div class="container my-4">
+
+  <!-- En-tête -->
+  <header class="mb-4">
+    <h1 class="fw-bold">Personnalisation du thème</h1>
+    <p class="text-muted mb-2">{{ theme.title }}</p>
+    <a href="{% url 'themes:theme-detail' theme.slug %}" class="btn btn-outline-secondary btn-sm">
+      ← Retour au thème
+    </a>
+  </header>
+
   <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-    <section class="row">
-      <article class="col-6">
-        <h2>Blocs de contenu</h2>
-        <div id="contentblock-formset">
-          {{ contentblock_formset.management_form }}
-          {% for form in contentblock_formset %}
-            <div class="contentblock-form">
-              {% for field in form.visible_fields %}
-                {% if field.name != 'DELETE' %}
-                  <p>{{ field.label_tag }} {{ field }}</p>
-                {% endif %}
-              {% endfor %}
-              {% if contentblock_formset.can_delete and form.DELETE %}
-                <label>Supprimer : {{ form.DELETE }}</label>
-              {% endif %}
-            </div>
-          {% endfor %}
-        </div>
-        <button type="button" id="add-contentblock">Ajouter un bloc</button>
-      </article>
+    {% csrf_token %}
+    <div class="row g-4">
 
-      <article class="col-6">
-        <h2>Réglementations</h2>
-        <div id="reglementation-formset">
-          {{ reglementation_formset.management_form }}
-          {% for form in reglementation_formset %}
-            <div class="reglementation-form">
-              {% for field in form.visible_fields %}
-                {% if field.name != 'DELETE' %}
-                  <p>{{ field.label_tag }} {{ field }}</p>
-                {% endif %}
-              {% endfor %}
-              {% if reglementation_formset.can_delete and form.DELETE %}
-                <label>Supprimer : {{ form.DELETE }}</label>
-              {% endif %}
-            </div>
-          {% endfor %}
-        </div>
-        <button type="button" id="add-reglementation">Ajouter une réglementation</button>
+      <!-- Blocs de contenu -->
+      <section class="col-lg-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Blocs de contenu pédagogique</h2>
+            {{ contentblock_formset.management_form }}
+            <div id="contentblock-formset" class="vstack gap-3">
 
-        <hr>
-        <button type="submit">Enregistrer</button>
-      </article>
-    </section>
+              {% for form in contentblock_formset %}
+                <article class="border rounded p-3 bg-light">
+                  <h3 class="h6 text-primary mb-3">Bloc {{ forloop.counter }}</h3>
+
+                  {% for field in form.visible_fields %}
+                    {% if field.name != 'DELETE' %}
+                      <div class="mb-3">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if contentblock_formset.can_delete %}
+                    <div class="form-check">
+                      {{ form.DELETE }}
+                      <label class="form-check-label text-danger">Supprimer ce bloc</label>
+                    </div>
+                  {% endif %}
+                </article>
+              {% endfor %}
+
+            </div>
+            <button type="button" id="add-contentblock" class="btn btn-outline-primary btn-sm mt-3">+ Ajouter un bloc</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Réglementations -->
+      <section class="col-lg-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Réglementations associées</h2>
+            {{ reglementation_formset.management_form }}
+            <div id="reglementation-formset" class="vstack gap-3">
+
+              {% for form in reglementation_formset %}
+                <article class="border rounded p-3 bg-light">
+                  <h3 class="h6 text-primary mb-3">Article {{ forloop.counter }}</h3>
+
+                  {% for field in form.visible_fields %}
+                    {% if field.name != 'DELETE' %}
+                      <div class="mb-3">
+                        {{ field.label_tag }}
+
+                        {# ✅ Checkboxes pour sanctions #}
+                        {% if field.name == "sanctions" %}
+                          <div class="vstack gap-1">
+                            {{ field }}
+                          </div>
+                        {% else %}
+                          {{ field }}
+                        {% endif %}
+
+                        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if reglementation_formset.can_delete %}
+                    <div class="form-check">
+                      {{ form.DELETE }}
+                      <label class="form-check-label text-danger">Supprimer cette réglementation</label>
+                    </div>
+                  {% endif %}
+                </article>
+              {% endfor %}
+
+            </div>
+            <button type="button" id="add-reglementation" class="btn btn-outline-primary btn-sm mt-3">+ Ajouter une réglementation</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-4 d-flex justify-content-end gap-2">
+      <a href="{% url 'themes:theme-detail' theme.slug %}" class="btn btn-outline-secondary">Annuler</a>
+      <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
+    </div>
   </form>
-  
 
-<script src="{% static 'script.js' %}"></script>
+</div>
+
 {% endblock %}
