@@ -1,88 +1,145 @@
 {% extends "home/base.html" %}
 {% block content %}
-  <h1>{{ theme }}</h1>
 
-  <p>
-    <a href="{% url 'themes:theme-customize' theme.slug %}" class="btn btn-primary">
+<div class="container my-4">
+
+  <!-- ───── Titre du thème ───── -->
+  <header class="mb-4">
+    <h1 class="fw-bold">{{ theme.title }}</h1>
+    {% if theme.categorie %}
+      <p class="text-muted mb-2">{{ theme.categorie.name }}</p>
+    {% endif %}
+    <a href="{% url 'themes:theme-customize' theme.slug %}" class="btn btn-outline-primary btn-sm">
       Personnaliser le thème
     </a>
-  </p>
+  </header>
 
-  <section>
-    <h2>Contenu du thème</h2>
+  <!-- ───── Contenu pédagogique ───── -->
+  <section class="mb-5">
+    <h2 class="h4 mb-4">Contenu pédagogique</h2>
+
     {% for block in content_blocks %}
-      <article>
-        {% if block.title %}<h3>{{ block.title }}</h3>{% endif %}
-        {% if block.image %}
-          <img src="{{ block.image.url }}" alt="Image pour {{ block.title|default:'ce bloc' }}">
-        {% endif %}
-        <p>{{ block.texte }}</p>
+      <article class="card mb-4 shadow-sm border-0">
+        <div class="card-body">
+
+          {% if block.title %}
+            <h3 class="h5 fw-semibold mb-3">
+              {{ block.title }}
+            </h3>
+          {% endif %}
+
+          {% if block.image %}
+            <div class="mb-3 text-center">
+              <img
+                src="{{ block.image.url }}"
+                class="img-fluid rounded"
+                alt="{{ block.title|default:'Illustration pédagogique' }}"
+                style="max-height: 300px;"
+              >
+            </div>
+          {% endif %}
+
+          <div class="content-text" style="line-height: 1.7;">
+            {{ block.texte|linebreaks }}
+          </div>
+
+        </div>
       </article>
     {% empty %}
-      <p>Aucun contenu disponible pour ce thème.</p>
+      <div class="alert alert-info">
+        Aucun contenu pédagogique n’est encore disponible pour ce thème.
+      </div>
     {% endfor %}
   </section>
 
-  <section>
-    <h2>Réglementation</h2>
-   
-    <table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Article</th>
-      <th scope="col">Contenu</th>
-      <th scope="col">Amende</th>
-      <th scope="col">Retrait de points</th>
-      <th scope="col">Sanctions</th>
-      <th scope="col">Peines complémentaires</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for reg in reglementations %}
-    <tr>
-      <th scope="row">{{ reg.lettre }} {{ reg.numero_article }}</th>
-      <td>{{ reg.contenu }}</td>
-      <td>{% if reg.amende %}{{ reg.amende }} {% else %}-{% endif %}</td>
-      <td>{% if reg.retrait_points %}{{ reg.retrait_points }} pts{% else %}-{% endif %}</td>
-      <td>
-        <ul class="mb-0">
-          {% for sanction in reg.sanctions.all %}
-            {% if not sanction.complementaire %}
-              <li>
-                {{ sanction.libelle }} {% if sanction.duree %} - {{ sanction.duree }}{% endif %}
-              </li>
-            {% endif %}
-          {% endfor %}
-          {% if not reg.sanctions.all|length %}
-            -
-          {% endif %}
-        </ul>
-      </td>
-      <td>
-        <ul class="mb-0">
-          {% for sanction in reg.sanctions.all %}
-            {% if sanction.complementaire %}
-              <li>
-                {{ sanction.libelle }}{% if sanction.duree %} - {{ sanction.duree }}{% endif %}
-              </li>
-            {% endif %}
-          {% endfor %}
-          {% if not reg.sanctions.all|length %}
-            -
-          {% endif %}
-        </ul>
-      </td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="6" class="text-center">Aucune réglementation associée à ce thème.</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <!-- ───── Réglementation ───── -->
+  <section class="mb-5">
+    <h2 class="h4 mb-4">Réglementation associée</h2>
 
-    <p>
-        <a href="{% url 'themes:theme-list' %}">← Retour à la liste des thèmes</a>
-    </p>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Article</th>
+            <th>Contenu</th>
+            <th>Amende</th>
+            <th>Points</th>
+            <th>Sanctions</th>
+            <th>Peines complémentaires</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        {% for reg in reglementations %}
+          <tr>
+            <th>{{ reg.lettre }} {{ reg.numero_article }}</th>
+
+            <td style="max-width: 400px;">
+              {{ reg.contenu|linebreaksbr }}
+            </td>
+
+            <td>
+              {{ reg.amende|default:"–" }}
+            </td>
+
+            <td>
+              {% if reg.retrait_points %}
+                {{ reg.retrait_points }} pts
+              {% else %}
+                –
+              {% endif %}
+            </td>
+
+            <td>
+              <ul class="mb-0 ps-3">
+                {% for sanction in reg.sanctions.all %}
+                  {% if not sanction.complementaire %}
+                    <li>
+                      {{ sanction.libelle }}
+                      {% if sanction.duree %} – {{ sanction.duree }}{% endif %}
+                    </li>
+                  {% endif %}
+                {% empty %}
+                  <li>–</li>
+                {% endfor %}
+              </ul>
+            </td>
+
+            <td>
+              <ul class="mb-0 ps-3">
+                {% for sanction in reg.sanctions.all %}
+                  {% if sanction.complementaire %}
+                    <li>
+                      {{ sanction.libelle }}
+                      {% if sanction.duree %} – {{ sanction.duree }}{% endif %}
+                    </li>
+                  {% endif %}
+                {% empty %}
+                  <li>–</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center text-muted">
+              Aucune réglementation associée à ce thème.
+            </td>
+          </tr>
+        {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
   </section>
+
+  <!-- ───── Navigation ───── -->
+  <footer>
+    <a href="{% url 'themes:theme-list' %}" class="text-decoration-none">
+      ← Retour à la liste des thèmes
+    </a>
+  </footer>
+
+</div>
+
 {% endblock %}
