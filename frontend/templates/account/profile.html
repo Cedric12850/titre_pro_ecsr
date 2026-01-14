@@ -1,0 +1,32 @@
+{% extends "home/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <h1>Mon compte</h1>
+
+  <div class="card mt-3">
+    <div class="card-body">
+
+      <p><strong>Nom :</strong> {{ user.last_name }}</p>
+      <p><strong>Prénom :</strong> {{ user.first_name }}</p>
+      <p><strong>Email :</strong> {{ user.email }}</p>
+      <p><strong>Rôle :</strong> {{ user.get_role_display }}</p>
+
+      <!--<hr>
+
+       <div class="d-flex gap-2">
+        <a href="#" class="btn btn-primary">
+          Modifier mon profil
+        </a>
+
+        <a href="#" class="btn btn-outline-secondary">
+          Changer mon mot de passe
+        </a>
+      </div> -->
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

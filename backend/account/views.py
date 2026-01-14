@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 from account.models import User
 from .forms import RegisterForm
@@ -72,3 +73,7 @@ def signup_view(request):
         form = RegisterForm()
 
     return render(request, "account/signup.html", {"form": form})
+
+@login_required
+def profile_view(request):
+    return render(request, "account/profile.html")
