@@ -1,0 +1,14 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+<div style="margin-bottom: 20px; padding: 15px; background-color: #f0f8ff; border: 1px solid #cce; border-radius: 8px;">
+    <h2>Dashboard Utilisateurs</h2>
+    <p><strong>Total utilisateurs :</strong> {{ total_users }}</p>
+    <p><strong>Administrateurs :</strong> {{ count_admin }}</p>
+    <p><strong>Formateurs :</strong> {{ count_formateur }}</p>
+    <p><strong>Stagiaires :</strong> {{ count_stagiaire }}</p>
+    <p><strong>Élèves :</strong> {{ count_eleve }}</p>
+    <p><strong>Non approuvés :</strong> {{ count_non_approved }}</p>
+</div>
+{{ block.super }}
+{% endblock %}
