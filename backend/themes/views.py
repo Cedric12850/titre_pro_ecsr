@@ -22,14 +22,13 @@ class ThemeListView(ListView):
     
     # Liste provisoire de stagiaires
     STAGIAIRES = [
-        {"prenom": "Ali"},
-        #{"prenom": "Allan"},
-        {"prenom": "Enzo"},
-        {"prenom": "Etienne"},
-        {"prenom": "Laurent"},
-        {"prenom": "Meryl"},
-        {"prenom": "Quentin"},
-        {"prenom": "Tristan"},
+        {"prenom": "Caroline"},
+        {"prenom": "Célia"},
+        {"prenom": "Laure"},
+        {"prenom": "Patricia"},
+        {"prenom": "Frédéric"},
+        {"prenom": "Raphael"},
+        {"prenom": "Valentin"},
     ]
     
     def get_context_data(self, **kwargs):
