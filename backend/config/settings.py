@@ -1,15 +1,10 @@
 import os
-# from dotenv import load_dotenv
-# load_dotenv()
 import pymysql
 pymysql.install_as_MySQLdb()
 import dotenv
 from pathlib import Path
 dotenv.load_dotenv()
 
-
-# BASE_DIR pointe sur la racine du projet (contenant backend/ et frontend/)
-# BASE_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!z#u4l0)r^wa%s-lp01n22vx=e@)ohhvf7c!qa=r6-8x^e*+(='
 DEBUG = True

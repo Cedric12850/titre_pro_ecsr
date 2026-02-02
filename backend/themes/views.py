@@ -118,4 +118,3 @@ class ThemeCustomizeView(RoleRequiredMixin, View):
             'contentblock_formset': contentblock_formset,
             'reglementation_formset': reglementation_formset,
         })
-        

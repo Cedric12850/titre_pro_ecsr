@@ -91,13 +91,19 @@ class ProgressionUpdateView(RoleRequiredMixin, UpdateView):
     model = Progression
     form_class = ProgressionForm
     template_name = 'eleves/progression_form.html'
-    allowed_roles = ["ADMIN", "FORMATEUR","STAGIAIRE"]
+    allowed_roles = ["ADMIN", "FORMATEUR", "STAGIAIRE"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["eleve"] = self.object.eleve
+        return context
 
     def get_success_url(self):
         return reverse_lazy(
             "eleves:eleve-detail",
             kwargs={"pk": self.object.eleve.pk}
         )
+
     
 def eleve_progression_pdf(request, pk):
     if not request.user.is_authenticated or request.user.role not in ["ADMIN", "FORMATEUR"]:
