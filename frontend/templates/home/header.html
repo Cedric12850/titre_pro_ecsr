@@ -50,8 +50,13 @@
           <a class="nav-link" href="#">La réglementation routière</a>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#">La trame pédagogique</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            La trame pédagogique
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'competence_list' %}">Compétences</a></li>
+          </ul>
         </li>
 
         <li class="nav-item">

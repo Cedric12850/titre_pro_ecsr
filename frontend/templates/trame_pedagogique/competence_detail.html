@@ -1,0 +1,14 @@
+{% extends "home/base.html" %}
+{% block content %}
+<h1>{{ object }}</h1>
+
+<ul>
+    {% for field in object._meta.fields %}
+    <li><strong>{{ field.verbose_name|title }}:</strong> {{ object|attr:field.name }}</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url model._meta.model_name+'_update' object.pk %}" class="btn btn-warning">Éditer</a>
+<a href="{% url model._meta.model_name+'_delete' object.pk %}" class="btn btn-danger">Supprimer</a>
+<a href="{% url model._meta.model_name+'_list' %}" class="btn btn-secondary">Retour</a>
+{% endblock %}
