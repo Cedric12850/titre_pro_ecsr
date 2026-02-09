@@ -1,5 +1,5 @@
 {% extends "home/base.html" %}
-
+{% load static %}
 
 {% block title %}Carte mentale{% endblock %}
 
@@ -11,7 +11,6 @@
     <!-- Barre d'outils -->
     <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <!-- Titre de la carte -->
         <input
             type="text"
             name="title"
@@ -22,7 +21,6 @@
             required
         >
 
-        <!-- Boutons et personnalisation -->
         <div class="d-flex flex-wrap align-items-center mb-3">
 
             <label class="me-2">Couleur nœud:</label>
@@ -48,17 +46,15 @@
         </div>
     </div>
 
-    <!-- Champ caché pour stocker le JSON -->
+    <!-- Stockage JSON -->
     <input type="hidden" name="data" id="mindmap_data">
 
-    <!-- Container jsMind -->
-    <div id="jsmind_container"
-         style="width:100%; height:600px; border:1px solid #ccc;">
-    </div>
+    <!-- Zone mindmap -->
+    <div id="jsmind_container" style="width:100%; height:600px; border:1px solid #ccc;"></div>
 
 </form>
 
-<!-- Injection des données JSON existantes -->
+<!-- Données existantes -->
 {% if object %}
     {{ object.data|json_script:"mind_data" }}
 {% else %}
@@ -71,5 +67,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsmind/style/jsmind.css">
 <script src="https://cdn.jsdelivr.net/npm/jsmind/js/jsmind.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsmind/js/jsmind.draggable.js"></script>
-<script src="{% static 'mindmap/script.js' %}"></script>
+
+<script src="{% static 'js/mindmap.js' %}"></script>
 {% endblock extra_js %}

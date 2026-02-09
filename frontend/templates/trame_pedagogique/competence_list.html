@@ -1,0 +1,58 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Trame pédagogique</h1>
+
+<!-- ------------------ Liste des compétences ------------------ -->
+<div class="accordion" id="competenceAccordion">
+    {% for competence in object_list %}
+    <div class="accordion-item mb-2">
+        <h2 class="accordion-header" id="heading{{ competence.pk }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ competence.pk }}" aria-expanded="false" aria-controls="collapse{{ competence.pk }}">
+                {{ competence.numero }} - {{ competence.titre }}
+            </button>
+        </h2>
+
+        <div id="collapse{{ competence.pk }}" class="accordion-collapse collapse" aria-labelledby="heading{{ competence.pk }}" data-bs-parent="#competenceAccordion">
+            <div class="accordion-body">
+
+                <!-- ------------------ Sous-compétences avec un seul ouvert ------------------ -->
+                <div class="accordion" id="sousAccordion{{ competence.pk }}">
+                    {% for sous in competence.souscompetence_set.all %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSous{{ sous.pk }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSous{{ sous.pk }}" aria-expanded="false" aria-controls="collapseSous{{ sous.pk }}">
+                                {{ competence.numero }}{{ sous.lettre }} - {{ sous.titre }}
+                            </button>
+                        </h2>
+                        <div id="collapseSous{{ sous.pk }}" class="accordion-collapse collapse" aria-labelledby="headingSous{{ sous.pk }}" data-bs-parent="#sousAccordion{{ competence.pk }}">
+                            <div class="accordion-body">
+                                {% if sous.objectif_set.exists %}
+                                <ul class="list-group">
+                                    {% for obj in sous.objectif_set.all %}
+                                    <li class="list-group-item">
+                                        {{ obj.intitule }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                <p>Aucun objectif défini.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>Aucune sous-compétence définie.</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Aucune compétence disponible.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

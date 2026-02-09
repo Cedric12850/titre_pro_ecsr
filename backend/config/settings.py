@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'eleves',
     'mindmap',
     "account",
+    "trame_pedagogique",
 ]
 
 MIDDLEWARE = [

@@ -26,7 +26,7 @@ urlpatterns = [
     path('eleves/', include('eleves.urls')),
     path('mindmap/', include('mindmap.urls')),
     path("account/", include("account.urls")),
-
+    path("trame_pedagogique/", include("trame_pedagogique.urls")),
     ]
 
 if settings.DEBUG:
