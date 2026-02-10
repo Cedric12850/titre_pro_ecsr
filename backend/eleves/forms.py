@@ -1,6 +1,13 @@
 from django import forms
-from .models import Eleve, Progression
+from .models import Eleve, Progression, ProgressionObjectif
 from ckeditor.widgets import CKEditorWidget
+from django.forms import modelformset_factory
+
+ProgressionObjectifFormSet = modelformset_factory(
+    ProgressionObjectif,
+    fields=['statut'],
+    extra=0
+)
 
 class ProgressionForm(forms.ModelForm):
     commentaire = forms.CharField(widget=CKEditorWidget(), required=False)
@@ -21,3 +28,4 @@ class EleveForm(forms.ModelForm):
         widgets = {
             'date_naissance': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
         }
+        

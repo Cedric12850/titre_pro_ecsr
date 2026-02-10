@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'home',
     'themes',
-    'eleves',
+    'eleves.apps.ElevesConfig',
     'mindmap',
     "account",
     "trame_pedagogique",

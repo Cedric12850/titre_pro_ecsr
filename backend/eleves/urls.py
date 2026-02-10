@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import EleveCreateView, EleveDeleteView, EleveListView, EleveDetailView, ProgressionCreateView, ProgressionUpdateView, eleve_progression_pdf
+from .views import EleveCreateView, EleveDeleteView, EleveListView, EleveDetailView, ProgressionCreateView, ProgressionUpdateView, eleve_objectifs_update, eleve_progression_pdf
 
 
 app_name = 'eleves'
@@ -11,7 +11,7 @@ urlpatterns = [
     path('<int:eleve_id>/progression/<int:pk>/modifier/', ProgressionUpdateView.as_view(), name='progression-update'),
     path('ajouter/', EleveCreateView.as_view(), name='eleve-create'),
     path('delete/<int:pk>/', EleveDeleteView.as_view(), name='eleve-delete'),
-    path("<int:pk>/progression/pdf/",eleve_progression_pdf,name="eleve-progression-pdf"
-),
+    path("<int:pk>/progression/pdf/",eleve_progression_pdf,name="eleve-progression-pdf"),
+    path('<int:eleve_id>/objectifs/', eleve_objectifs_update, name='eleve-objectifs-update'),
 
 ]
