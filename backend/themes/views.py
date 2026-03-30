@@ -1,4 +1,5 @@
 import random
+import re
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import CreateView, ListView, DetailView
@@ -127,3 +128,40 @@ class ThemeCustomizeView(RoleRequiredMixin, View):
             'contentblock_formset': contentblock_formset,
             'reglementation_formset': reglementation_formset,
         })
+
+def reglementation_sort_key(reg):
+    match = re.match(r'(\d+)-(\d+)', reg.numero_article)
+
+    if match:
+        numero_principal = int(match.group(1))
+        sous_numero = int(match.group(2))
+    else:
+        numero_principal = 0
+        sous_numero = 0
+
+    return (
+        numero_principal,  
+        reg.lettre,         
+        sous_numero       
+    )
+
+class ReglementationListView(ListView):
+    model = Reglementation
+    template_name = 'themes/reglementation_list.html'
+    context_object_name = 'reglementations'
+
+    def get_queryset(self):
+        queryset = Reglementation.objects.all() \
+            .select_related('theme') \
+            .prefetch_related('sanctions')
+
+        return sorted(queryset, key=reglementation_sort_key)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        for reg in context['reglementations']:
+            reg.sanctions_principales = reg.sanctions.filter(complementaire=False)
+            reg.sanctions_complementaires = reg.sanctions.filter(complementaire=True)
+
+        return context

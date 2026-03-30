@@ -1,0 +1,84 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h2>Réglementation routière</h2>
+
+    <div class="container mt-4">
+        <ul class="list-group">
+            {% for reg in reglementations %}
+            <li class="list-group-item border-0 px-0">
+                <!-- lien cliquable -->
+                <a href="#" 
+                class="text-decoration-none text-dark d-block"
+                data-bs-toggle="modal"
+                data-bs-target="#modalReg{{ reg.id }}">
+                <strong>Article {{ reg.lettre }} {{ reg.numero_article }}</strong>
+                </a>
+            </li>
+            {% empty %}
+            <li class="list-group-item">Aucune réglementation enregistrée.</li>
+            {% endfor %}
+        </ul>
+
+    <!-- 🪟 MODALS -->
+    {% for reg in reglementations %}
+        <div class="modal fade" id="modalReg{{ reg.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                        Article {{ reg.lettre }} {{ reg.numero_article }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        {% if reg.theme %}
+                        <p class="text-muted">
+                            Thème : {{ reg.theme.number }} - {{ reg.theme.title }}
+                        </p>
+                        {% endif %}
+
+                        <p>{{ reg.contenu|linebreaks }}</p>
+
+                        <hr>
+
+                        <p><strong>Date :</strong> {{ reg.date_version }}</p>
+
+                        {% if reg.amende %}
+                        <p><strong>Amende :</strong> {{ reg.amende }}</p>
+                        {% endif %}
+
+                        <p><strong>Retrait de points :</strong> {{ reg.retrait_points }}</p>
+
+                        {% if reg.sanctions_principales %}
+                        <p><strong>Sanctions principales :</strong></p>
+                        <ul>
+                            {% for s in reg.sanctions_principales %}
+                            <li>{{ s.libelle }} {% if s.duree %}({{ s.duree }}){% endif %}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+
+                        {% if reg.sanctions_complementaires %}
+                        <p><strong>Sanctions complémentaires :</strong></p>
+                        <ul>
+                            {% for s in reg.sanctions_complementaires %}
+                            <li>{{ s.libelle }} {% if s.duree %}({{ s.duree }}){% endif %}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}
