@@ -62,74 +62,97 @@
           <tr>
             <th>Article</th>
             <th>Contenu</th>
-            <th>Amende</th>
-            <th>Points</th>
-            <th>Sanctions</th>
-            <th>Peines complémentaires</th>
           </tr>
         </thead>
         <tbody>
-
         {% for reg in reglementations %}
           <tr>
             <th>{{ reg.lettre }} {{ reg.numero_article }}</th>
 
-            <td style="max-width: 400px;">
-              {{ reg.contenu|linebreaksbr }}
+            <td style="max-width: 500px;">
+              {{ reg.contenu|truncatewords:25 }}
             </td>
 
             <td>
-              {{ reg.amende|default:"–" }}
-            </td>
-
-            <td>
-              {% if reg.retrait_points %}
-                {{ reg.retrait_points }} pts
-              {% else %}
-                –
-              {% endif %}
-            </td>
-
-            <td>
-              <ul class="mb-0 ps-3">
-                {% for sanction in reg.sanctions.all %}
-                  {% if not sanction.complementaire %}
-                    <li>
-                      {{ sanction.libelle }}
-                      {% if sanction.duree %} – {{ sanction.duree }}{% endif %}
-                    </li>
-                  {% endif %}
-                {% empty %}
-                  <li>–</li>
-                {% endfor %}
-              </ul>
-            </td>
-
-            <td>
-              <ul class="mb-0 ps-3">
-                {% for sanction in reg.sanctions.all %}
-                  {% if sanction.complementaire %}
-                    <li>
-                      {{ sanction.libelle }}
-                      {% if sanction.duree %} – {{ sanction.duree }}{% endif %}
-                    </li>
-                  {% endif %}
-                {% empty %}
-                  <li>–</li>
-                {% endfor %}
-              </ul>
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="6" class="text-center text-muted">
-              Aucune réglementation associée à ce thème.
+              <button 
+                class="btn btn-sm btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#modalReg{{ reg.id }}"
+              >
+                Voir
+              </button>
             </td>
           </tr>
         {% endfor %}
-
         </tbody>
       </table>
+
+      {% for reg in reglementations %}
+        <div class="modal fade" id="modalReg{{ reg.id }}" tabindex="-1">
+          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+
+              <!-- Header -->
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  Article {{ reg.lettre }} {{ reg.numero_article }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+
+              <!-- Body -->
+              <div class="modal-body">
+
+                <p>{{ reg.contenu|linebreaks }}</p>
+
+                <hr>
+
+                <p><strong>Amende :</strong> {{ reg.amende|default:"Aucune" }} €</p>
+                <p><strong>Points :</strong> {{ reg.retrait_points|default:"Aucun" }}</p>
+
+                <!-- Sanctions principales -->
+                <h6 class="mt-3">Sanctions principales</h6>
+                {% if reg.sanctions_principales %}
+                  <ul>
+                    {% for sanction in reg.sanctions_principales %}
+                      <li>
+                        {{ sanction.libelle }}
+                        {% if sanction.duree %} ({{ sanction.duree }}){% endif %}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <p class="text-muted">Aucune</p>
+                {% endif %}
+
+                <!-- Peines complémentaires -->
+                <h6 class="mt-3">Peines complémentaires</h6>
+                {% if reg.sanctions_complementaires %}
+                  <ul>
+                    {% for sanction in reg.sanctions_complementaires %}
+                      <li>
+                        {{ sanction.libelle }}
+                        {% if sanction.duree %} ({{ sanction.duree }}){% endif %}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <p class="text-muted">Aucune</p>
+                {% endif %}
+
+              </div>
+
+              <!-- Footer -->
+              <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                  Fermer
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
     </div>
   </section>
 

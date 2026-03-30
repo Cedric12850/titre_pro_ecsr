@@ -57,8 +57,17 @@ class ThemeDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        reglementations = self.object.reglementations.all().prefetch_related('sanctions')
+
+        # 🔥 séparation propre
+        for reg in reglementations:
+            reg.sanctions_principales = reg.sanctions.filter(complementaire=False)
+            reg.sanctions_complementaires = reg.sanctions.filter(complementaire=True)
+
         context['content_blocks'] = self.object.content_blocks.all()
-        context['reglementations'] = self.object.reglementations.all()
+        context['reglementations'] = reglementations
+
         return context
     
 class ThemeCustomizeView(RoleRequiredMixin, View):
