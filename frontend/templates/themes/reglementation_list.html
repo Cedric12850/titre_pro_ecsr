@@ -3,82 +3,107 @@
 
 {% block content %}
 
-<h2>Réglementation routière</h2>
+<h2>📚 Réglementation routière</h2>
 
-    <div class="container mt-4">
-        <ul class="list-group">
-            {% for reg in reglementations %}
-            <li class="list-group-item border-0 px-0">
-                <!-- lien cliquable -->
-                <a href="#" 
-                class="text-decoration-none text-dark d-block"
-                data-bs-toggle="modal"
-                data-bs-target="#modalReg{{ reg.id }}">
-                <strong>Article {{ reg.lettre }} {{ reg.numero_article }}</strong>
-                </a>
-            </li>
-            {% empty %}
-            <li class="list-group-item">Aucune réglementation enregistrée.</li>
-            {% endfor %}
+<div class="container mt-4">
+  <h3><a href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074228/" target="_blank">
+    Le code de la route (Legifrance)</a></h3>
+
+  {% for livre, titres in structure.items %}
+    
+    <h3 class="mt-4">📘 Livre {{ livre.numero }} : {{ livre.titre }}</h3>
+
+    {% for titre, chapitres in titres.items %}
+      
+      <h4 class="ms-3 mt-3">📖 Titre {{ titre.numero }} : {{ titre.titre }}</h4>
+
+      {% for chapitre, articles in chapitres.items %}
+        
+        <h5 class="ms-4 mt-2">📂 Chapitre {{ chapitre.numero }} : {{ chapitre.titre }}</h5>
+
+        <ul class="list-group ms-5 mb-3">
+          {% for reg in articles %}
+          <li class="list-group-item border-0 px-0">
+
+            <a href="#"
+               class="text-decoration-none text-dark d-block"
+               data-bs-toggle="modal"
+               data-bs-target="#modalReg{{ reg.id }}">
+
+              <strong>Article {{ reg.lettre }} {{ reg.numero_article }}</strong>
+
+            </a>
+
+          </li>
+          {% endfor %}
         </ul>
 
-    <!-- 🪟 MODALS -->
-    {% for reg in reglementations %}
-        <div class="modal fade" id="modalReg{{ reg.id }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                <div class="modal-content">
+      {% endfor %}
 
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                        Article {{ reg.lettre }} {{ reg.numero_article }}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        {% if reg.theme %}
-                        <p class="text-muted">
-                            Thème : {{ reg.theme.number }} - {{ reg.theme.title }}
-                        </p>
-                        {% endif %}
-
-                        <p>{{ reg.contenu|linebreaks }}</p>
-
-                        <hr>
-
-                        <p><strong>Date :</strong> {{ reg.date_version }}</p>
-
-                        {% if reg.amende %}
-                        <p><strong>Amende :</strong> {{ reg.amende }}</p>
-                        {% endif %}
-
-                        <p><strong>Retrait de points :</strong> {{ reg.retrait_points }}</p>
-
-                        {% if reg.sanctions_principales %}
-                        <p><strong>Sanctions principales :</strong></p>
-                        <ul>
-                            {% for s in reg.sanctions_principales %}
-                            <li>{{ s.libelle }} {% if s.duree %}({{ s.duree }}){% endif %}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-
-                        {% if reg.sanctions_complementaires %}
-                        <p><strong>Sanctions complémentaires :</strong></p>
-                        <ul>
-                            {% for s in reg.sanctions_complementaires %}
-                            <li>{{ s.libelle }} {% if s.duree %}({{ s.duree }}){% endif %}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
     {% endfor %}
+
+  {% empty %}
+    <p>Aucune réglementation enregistrée.</p>
+  {% endfor %}
+
+</div>
+
+<!-- 🔥 MODALS -->
+{% for reg in reglementations %}
+<div class="modal fade" id="modalReg{{ reg.id }}" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Article {{ reg.lettre }} {{ reg.numero_article }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        {% if reg.theme %}
+        <p class="text-muted">
+          Thème : {{ reg.theme.number }} - {{ reg.theme.title }}
+        </p>
+        {% endif %}
+
+        <p>{{ reg.contenu|linebreaks }}</p>
+
+        <hr>
+
+        <p><strong>Date :</strong> {{ reg.date_version }}</p>
+
+        {% if reg.amende %}
+        <p><strong>Amende :</strong> {{ reg.amende }}</p>
+        {% endif %}
+
+        <p><strong>Retrait de points :</strong> {{ reg.retrait_points }}</p>
+
+        {% if reg.sanctions_principales %}
+        <p><strong>Sanctions principales :</strong></p>
+        <ul>
+          {% for s in reg.sanctions_principales %}
+          <li>{{ s.libelle }} {% if s.duree %}({{ s.duree }}){% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if reg.sanctions_complementaires %}
+        <p><strong>Sanctions complémentaires :</strong></p>
+        <ul>
+          {% for s in reg.sanctions_complementaires %}
+          <li>{{ s.libelle }} {% if s.duree %}({{ s.duree }}){% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+      </div>
+
     </div>
+  </div>
+</div>
+{% endfor %}
 
 {% endblock %}

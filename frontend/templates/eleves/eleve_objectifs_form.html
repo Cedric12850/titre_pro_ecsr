@@ -75,12 +75,65 @@
                         <tr>
                           <td>{{ obj.objectif.intitule }}</td>
                           <td class="text-center">
-                            <select name="form-{{ obj.id }}" class="form-select form-select-sm w-auto d-inline">
+                            <div class="btn-group" role="group">
+                                <input type="radio"
+                                      class="btn-check"
+                                      name="form-{{ obj.id }}"
+                                      id="na-{{ obj.id }}"
+                                      value="pas_aborde"
+                                      {% if obj.statut == "pas_aborde" %}checked{% endif %}>
+
+                                <label class="btn btn-outline-secondary btn-sm"
+                                      for="na-{{ obj.id }}">
+                                    Non abordé
+                                </label>
+
+
+                                <input type="radio"
+                                      class="btn-check"
+                                      name="form-{{ obj.id }}"
+                                      id="ab-{{ obj.id }}"
+                                      value="aborde"
+                                      {% if obj.statut == "aborde" %}checked{% endif %}>
+
+                                <label class="btn btn-outline-info btn-sm"
+                                      for="ab-{{ obj.id }}">
+                                    Abordé
+                                </label>
+
+
+                                <input type="radio"
+                                      class="btn-check"
+                                      name="form-{{ obj.id }}"
+                                      id="ec-{{ obj.id }}"
+                                      value="en_cours"
+                                      {% if obj.statut == "en_cours" %}checked{% endif %}>
+
+                                <label class="btn btn-outline-warning btn-sm"
+                                      for="ec-{{ obj.id }}">
+                                    En cours
+                                </label>
+
+
+                                <input type="radio"
+                                      class="btn-check"
+                                      name="form-{{ obj.id }}"
+                                      id="va-{{ obj.id }}"
+                                      value="validee"
+                                      {% if obj.statut == "validee" %}checked{% endif %}>
+
+                                <label class="btn btn-outline-success btn-sm"
+                                      for="va-{{ obj.id }}">
+                                    Validée
+                                </label>
+
+                            </div>
+                            <!-- <select name="form-{{ obj.id }}" class="form-select form-select-sm w-auto d-inline">
                               <option value="pas_aborde" {% if obj.statut == "pas_aborde" %}selected{% endif %}>Pas abordé</option>
                               <option value="aborde" {% if obj.statut == "aborde" %}selected{% endif %}>Abordé</option>
                               <option value="en_cours" {% if obj.statut == "en_cours" %}selected{% endif %}>En cours</option>
                               <option value="validee" {% if obj.statut == "validee" %}selected{% endif %}>Validée</option>
-                            </select>
+                            </select> 
                             <span class="badge 
                                   {% if obj.statut == 'pas_aborde' %}bg-secondary
                                   {% elif obj.statut == 'aborde' %}bg-info
@@ -88,7 +141,7 @@
                                   {% elif obj.statut == 'validee' %}bg-success
                                   {% else %}bg-secondary{% endif %} ms-2">
                               {{ obj.get_statut_display }}
-                            </span>
+                            </span>-->
                           </td>
                         </tr>
                       {% endfor %}

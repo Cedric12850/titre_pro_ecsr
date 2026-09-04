@@ -69,11 +69,47 @@ class Sanction(models.Model):
     def __str__(self):
         return f"{self.libelle} ({self.duree})" if self.duree else self.libelle
     
+class Livre(models.Model):
+    numero = models.PositiveIntegerField(unique=True)
+    titre = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"Livre {self.numero} - {self.titre}"
+    
+class Titre(models.Model):
+    livre = models.ForeignKey(Livre, on_delete=models.CASCADE, related_name='titres')
+    numero = models.PositiveIntegerField()
+    titre = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ('livre', 'numero')
+
+    def __str__(self):
+        return f"{self.livre.numero}.{self.numero} - {self.titre}"
+    
+class Chapitre(models.Model):
+    titre_parent = models.ForeignKey(Titre, on_delete=models.CASCADE, related_name='chapitres', null= True, blank= True)
+    numero = models.PositiveIntegerField()
+    titre = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ('titre_parent', 'numero')
+
+    def __str__(self):
+        return f"{self.titre_parent.livre.numero}.{self.titre_parent.numero}.{self.numero} - {self.titre}"
+    
 class Reglementation(models.Model):
     LETTRE_CHOICES = [
         ('L', 'L'),
         ('R', 'R'),
     ]
+    chapitre = models.ForeignKey(
+        Chapitre,
+        on_delete=models.CASCADE,
+        related_name="reglementations",
+        null=True,
+        blank=True
+    )
     theme = models.ForeignKey(Theme, on_delete=models.CASCADE, related_name="reglementations", blank=True, null=True)
     lettre = models.CharField(max_length=1, choices=LETTRE_CHOICES)
     numero_article = models.CharField(max_length=10)  # ex: '111-1'

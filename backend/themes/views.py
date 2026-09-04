@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from account.mixins import RoleRequiredMixin
 from .models import Categorie, ContentBlock, Reglementation, Theme
 from .forms import ContentBlockFormSet, ReglementationFormSet, ThemeForm
+from collections import defaultdict
 
 class ThemeCreateView(CreateView):
     model = Theme
@@ -23,13 +24,14 @@ class ThemeListView(ListView):
     
     # Liste provisoire de stagiaires
     STAGIAIRES = [
-        {"prenom": "Caroline"},
-        {"prenom": "Célia"},
-        {"prenom": "Laure"},
-        {"prenom": "Patricia"},
-        {"prenom": "Frédéric"},
-        {"prenom": "Raphael"},
-        {"prenom": "Valentin"},
+        {"prenom": "Chamsia"},
+        {"prenom": "Cyril"},
+        {"prenom": "Clément"},
+        {"prenom": "Greg"},
+        {"prenom": "Jeff"},
+        {"prenom": "Antoine"},
+        {"prenom": "Thibault"},
+        {"prenom": "Christophe"},
     ]
     
     def get_context_data(self, **kwargs):
@@ -129,21 +131,39 @@ class ThemeCustomizeView(RoleRequiredMixin, View):
             'reglementation_formset': reglementation_formset,
         })
 
-def reglementation_sort_key(reg):
+# 🔥 Fonction de parsing
+def parse_article(reg):
     match = re.match(r'(\d+)-(\d+)', reg.numero_article)
 
-    if match:
-        numero_principal = int(match.group(1))
-        sous_numero = int(match.group(2))
-    else:
-        numero_principal = 0
-        sous_numero = 0
+    if not match:
+        return None
 
-    return (
-        numero_principal,  
-        reg.lettre,         
-        sous_numero       
-    )
+    numero = int(match.group(1))
+
+    livre = numero // 100
+    titre = (numero % 100) // 10
+    chapitre = numero % 10
+
+    return {
+        "livre": livre,
+        "titre": titre,
+        "chapitre": chapitre
+    }
+
+
+# 🔥 Tri des articles
+def reglementation_sort_key(reg):
+    parsed = parse_article(reg)
+
+    if parsed:
+        return (
+            parsed["livre"],
+            parsed["titre"],
+            parsed["chapitre"],
+            reg.lettre
+        )
+
+    return (0, 0, 0, reg.lettre)
 
 class ReglementationListView(ListView):
     model = Reglementation
@@ -151,17 +171,26 @@ class ReglementationListView(ListView):
     context_object_name = 'reglementations'
 
     def get_queryset(self):
-        queryset = Reglementation.objects.all() \
-            .select_related('theme') \
-            .prefetch_related('sanctions')
-
-        return sorted(queryset, key=reglementation_sort_key)
+        return Reglementation.objects.select_related(
+            'chapitre__titre_parent__livre', 'theme'
+        ).prefetch_related('sanctions')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        structure = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+
         for reg in context['reglementations']:
+            if reg.chapitre:
+                livre = reg.chapitre.titre_parent.livre
+                titre = reg.chapitre.titre_parent
+                chapitre = reg.chapitre
+
+                structure[livre][titre][chapitre].append(reg)
+
+            # séparation sanctions
             reg.sanctions_principales = reg.sanctions.filter(complementaire=False)
             reg.sanctions_complementaires = reg.sanctions.filter(complementaire=True)
 
+        context['structure'] = structure
         return context
