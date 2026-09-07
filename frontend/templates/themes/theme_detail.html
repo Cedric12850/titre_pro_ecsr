@@ -102,9 +102,8 @@
 
               <!-- Body -->
               <div class="modal-body">
-
                 <p>{{ reg.contenu|linebreaks }}</p>
-
+                <p><small><i>(dernière mise à jour: {{ reg.date_version }})</i></small></p>
                 <hr>
 
                 <p><strong>Amende :</strong> {{ reg.amende|default:"-" }} €</p>

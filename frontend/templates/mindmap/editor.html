@@ -1,72 +1,565 @@
 {% extends "home/base.html" %}
 {% load static %}
 
-{% block title %}Carte mentale{% endblock %}
+{% block title %}
+    {% if object %}
+        {{ object.title }} — Carte mentale
+    {% else %}
+        Nouvelle carte mentale
+    {% endif %}
+{% endblock %}
+
 
 {% block content %}
 
-<form method="post">
-    {% csrf_token %}
+<div class="mindmap-editor">
 
-    <!-- Barre d'outils -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- =========================================================
+         BARRE SUPÉRIEURE
+    ========================================================== -->
 
-        <input
-            type="text"
-            name="title"
-            id="mindmap_title"
-            class="form-control me-3"
-            placeholder="Titre de la carte"
-            value="{{ object.title|default:'Nouvelle carte' }}"
-            required
-        >
+    <header class="mindmap-topbar">
 
-        <div class="d-flex flex-wrap align-items-center mb-3">
+        <div class="mindmap-topbar-left">
 
-            <label class="me-2">Couleur nœud:</label>
-            <input type="color" id="node_color" value="#ffa500" class="me-3">
+            <a
+                href="{% url 'mindmap:mindmap-list' %}"
+                class="mindmap-back-btn"
+                title="Retour aux cartes"
+            >
+                <span>←</span>
+            </a>
 
-            <label class="me-2">Couleur texte:</label>
-            <input type="color" id="text_color" value="#000000" class="me-3">
+            <div class="mindmap-title-wrapper">
 
-            <label class="me-2">Texte:</label>
-            <input type="text" id="node_text" placeholder="Texte du nœud" class="me-3">
+                <input
+                    type="text"
+                    id="mindmap_title"
+                    name="title"
+                    class="mindmap-title-input"
+                    value="{{ object.title|default:'Nouvelle carte' }}"
+                    placeholder="Titre de la carte"
+                    maxlength="200"
+                    required
+                >
 
-            <button type="button" id="add_node_btn" class="btn btn-success me-1">
-                ➕ Ajouter un nœud
+                <span id="save_status" class="mindmap-save-status">
+                    Modifications non enregistrées
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="mindmap-topbar-right">
+
+            <button
+                type="button"
+                id="undo_btn"
+                class="mindmap-toolbar-btn"
+                title="Annuler (Ctrl+Z)"
+            >
+                ↶
             </button>
 
-            <button type="submit" id="save_btn" class="btn btn-primary me-1">
+            <button
+                type="button"
+                id="redo_btn"
+                class="mindmap-toolbar-btn"
+                title="Rétablir (Ctrl+Y)"
+            >
+                ↷
+            </button>
+
+            <span class="mindmap-toolbar-separator"></span>
+
+            <button
+                type="button"
+                id="save_btn"
+                class="mindmap-btn mindmap-btn-primary"
+            >
                 💾 Enregistrer
             </button>
 
-            <a href="{% url 'mindmap:mindmap-list' %}" class="btn btn-secondary">
-                Retour
-            </a>
         </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         BARRE D'OUTILS
+    ========================================================== -->
+
+    <div class="mindmap-toolbar">
+
+        <div class="mindmap-toolbar-group">
+
+            <button
+                type="button"
+                id="add_child_btn"
+                class="mindmap-toolbar-btn"
+                title="Ajouter un enfant (Entrée)"
+            >
+                <span>＋</span>
+                <small>Enfant</small>
+            </button>
+
+            <button
+                type="button"
+                id="add_sibling_btn"
+                class="mindmap-toolbar-btn"
+                title="Ajouter un frère/sœur (Tab)"
+            >
+                <span>＋</span>
+                <small>Frère</small>
+            </button>
+
+            <button
+                type="button"
+                id="delete_node_btn"
+                class="mindmap-toolbar-btn danger"
+                title="Supprimer (Suppr)"
+            >
+                <span>🗑</span>
+                <small>Supprimer</small>
+            </button>
+
+        </div>
+
+
+        <span class="mindmap-toolbar-separator"></span>
+
+
+        <div class="mindmap-toolbar-group">
+
+            <button
+                type="button"
+                id="copy_node_btn"
+                class="mindmap-toolbar-btn"
+                title="Copier (Ctrl+C)"
+            >
+                <span>📋</span>
+                <small>Copier</small>
+            </button>
+
+            <button
+                type="button"
+                id="paste_node_btn"
+                class="mindmap-toolbar-btn"
+                title="Coller (Ctrl+V)"
+            >
+                <span>📄</span>
+                <small>Coller</small>
+            </button>
+
+        </div>
+
+
+        <span class="mindmap-toolbar-separator"></span>
+
+
+        <div class="mindmap-toolbar-group">
+
+            <button
+                type="button"
+                id="zoom_out_btn"
+                class="mindmap-toolbar-btn"
+                title="Zoom arrière"
+            >
+                −
+            </button>
+
+            <span
+                id="zoom_value"
+                class="mindmap-zoom-value"
+            >
+                100%
+            </span>
+
+            <button
+                type="button"
+                id="zoom_in_btn"
+                class="mindmap-toolbar-btn"
+                title="Zoom avant"
+            >
+                ＋
+            </button>
+
+            <button
+                type="button"
+                id="zoom_reset_btn"
+                class="mindmap-toolbar-btn"
+                title="Réinitialiser le zoom"
+            >
+                1:1
+            </button>
+
+            <button
+                type="button"
+                id="center_btn"
+                class="mindmap-toolbar-btn"
+                title="Recentrer la carte"
+            >
+                ◎
+            </button>
+
+        </div>
+
+
+        <div class="mindmap-toolbar-spacer"></div>
+
+
+        <div class="mindmap-toolbar-group">
+
+            <button
+                type="button"
+                id="toggle_all_btn"
+                class="mindmap-toolbar-btn"
+                title="Déplier/replier"
+            >
+                ⤢
+            </button>
+
+            <button
+                type="button"
+                id="fullscreen_btn"
+                class="mindmap-toolbar-btn"
+                title="Plein écran"
+            >
+                ⛶
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- Stockage JSON -->
-    <input type="hidden" name="data" id="mindmap_data">
 
-    <!-- Zone mindmap -->
-    <div id="jsmind_container" style="width:100%; height:600px; border:1px solid #ccc;"></div>
+    <!-- =========================================================
+         CORPS DE L'EDITEUR
+    ========================================================== -->
+
+    <div class="mindmap-workspace">
+
+
+        <!-- =====================================================
+             CANVAS
+        ====================================================== -->
+
+        <main class="mindmap-canvas-wrapper">
+
+            <div
+                id="jsmind_container"
+                class="mindmap-canvas"
+            ></div>
+
+
+            <!-- Aide clavier -->
+
+            <div class="mindmap-help">
+
+                <span>
+                    <kbd>Entrée</kbd> enfant
+                </span>
+
+                <span>
+                    <kbd>Tab</kbd> frère
+                </span>
+
+                <span>
+                    <kbd>Suppr</kbd> supprimer
+                </span>
+
+                <span>
+                    <kbd>Ctrl</kbd> + <kbd>S</kbd> enregistrer
+                </span>
+
+            </div>
+
+        </main>
+
+
+        <!-- =====================================================
+             PANNEAU PROPRIÉTÉS
+        ====================================================== -->
+
+        <aside
+            id="node_properties"
+            class="mindmap-properties"
+        >
+
+            <div class="mindmap-properties-header">
+
+                <div>
+                    <span class="mindmap-properties-eyebrow">
+                        PROPRIÉTÉS
+                    </span>
+
+                    <h2>Nœud sélectionné</h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="close_properties_btn"
+                    class="mindmap-properties-close"
+                    title="Fermer"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="mindmap-properties-body">
+
+
+                <!-- Texte -->
+
+                <div class="mindmap-form-group">
+
+                    <label for="property_text">
+                        Texte
+                    </label>
+
+                    <textarea
+                        id="property_text"
+                        rows="3"
+                        placeholder="Texte du nœud"
+                    ></textarea>
+
+                </div>
+
+
+                <!-- Couleur -->
+
+                <div class="mindmap-property-grid">
+
+                    <div class="mindmap-form-group">
+
+                        <label for="property_background">
+                            Fond
+                        </label>
+
+                        <input
+                            type="color"
+                            id="property_background"
+                            value="#FFFFFF"
+                        >
+
+                    </div>
+
+
+                    <div class="mindmap-form-group">
+
+                        <label for="property_color">
+                            Texte
+                        </label>
+
+                        <input
+                            type="color"
+                            id="property_color"
+                            value="#1B2A4A"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Taille -->
+
+                <div class="mindmap-form-group">
+
+                    <label for="property_font_size">
+                        Taille du texte
+                    </label>
+
+                    <div class="mindmap-range-wrapper">
+
+                        <input
+                            type="range"
+                            id="property_font_size"
+                            min="10"
+                            max="32"
+                            value="14"
+                        >
+
+                        <span id="font_size_value">
+                            14 px
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Style -->
+
+                <div class="mindmap-form-group">
+
+                    <label>
+                        Style
+                    </label>
+
+                    <div class="mindmap-style-buttons">
+
+                        <button
+                            type="button"
+                            id="property_bold"
+                            class="mindmap-style-btn"
+                        >
+                            <strong>G</strong>
+                        </button>
+
+                        <button
+                            type="button"
+                            id="property_italic"
+                            class="mindmap-style-btn"
+                        >
+                            <em>I</em>
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Lien -->
+
+                <div class="mindmap-form-group">
+
+                    <label for="property_link">
+                        Lien
+                    </label>
+
+                    <input
+                        type="url"
+                        id="property_link"
+                        placeholder="https://..."
+                    >
+
+                </div>
+
+
+                <!-- Note -->
+
+                <div class="mindmap-form-group">
+
+                    <label for="property_note">
+                        Note
+                    </label>
+
+                    <textarea
+                        id="property_note"
+                        rows="4"
+                        placeholder="Ajouter une note..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="mindmap-property-actions">
+
+                    <button
+                        type="button"
+                        id="apply_properties_btn"
+                        class="mindmap-btn mindmap-btn-primary w-100"
+                    >
+                        Appliquer
+                    </button>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     FORMULAIRE DJANGO
+============================================================== -->
+
+<form
+    method="post"
+    id="mindmap_form"
+    class="d-none"
+>
+
+    {% csrf_token %}
+
+    <input
+        type="hidden"
+        name="title"
+        id="form_title"
+    >
+
+    <input
+        type="hidden"
+        name="data"
+        id="mindmap_data"
+    >
 
 </form>
 
-<!-- Données existantes -->
+
+<!-- =============================================================
+     DONNÉES EXISTANTES
+============================================================== -->
+
 {% if object %}
+
     {{ object.data|json_script:"mind_data" }}
+
 {% else %}
-    <script id="mind_data" type="application/json">{}</script>
+
+    <script
+        id="mind_data"
+        type="application/json"
+    >
+        {
+            "meta": {
+                "name": "Conduct'Art",
+                "version": "2.0"
+            },
+            "format": "node_tree",
+            "data": {
+                "id": "root",
+                "topic": "Nouvelle carte",
+                "expanded": true,
+                "children": []
+            }
+        }
+    </script>
+
 {% endif %}
 
 {% endblock content %}
 
+
 {% block extra_js %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsmind/style/jsmind.css">
-<script src="https://cdn.jsdelivr.net/npm/jsmind/js/jsmind.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsmind/js/jsmind.draggable.js"></script>
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/mindmap.css' %}"
+>
+
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/jsmind@0.8.7/style/jsmind.css"
+>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/jsmind@0.8.7/es6/jsmind.js"
+></script>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/jsmind@0.8.7/es6/jsmind.draggable-node.js"
+></script>
 
 <script src="{% static 'js/mindmap.js' %}"></script>
+
 {% endblock extra_js %}

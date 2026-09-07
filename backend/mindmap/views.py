@@ -4,45 +4,109 @@ from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import MindMap
+from django.contrib import messages
+from django.views import generic
 
 
-class MindMapListView(ListView):
+class MindMapListView(generic.ListView):
     model = MindMap
     template_name = "mindmap/list.html"
     context_object_name = "mindmaps"
 
 
-class MindMapCreateView(CreateView):
+class MindMapCreateView(generic.CreateView):
     model = MindMap
     fields = ["title"]
     template_name = "mindmap/editor.html"
     success_url = reverse_lazy("mindmap:mindmap-list")
 
     def form_valid(self, form):
-        data = self.request.POST.get("data")
-        if data:
-            form.instance.data = json.loads(data)
-        return super().form_valid(form)
+        raw_data = self.request.POST.get("data")
+
+        if raw_data:
+            try:
+                data = json.loads(raw_data)
+
+                if self.is_valid_mindmap_data(data):
+                    form.instance.data = data
+
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+        response = super().form_valid(form)
+
+        messages.success(
+            self.request,
+            "La carte mentale a été créée avec succès."
+        )
+
+        return response
+
+    @staticmethod
+    def is_valid_mindmap_data(data):
+        """
+        Vérifie que les données reçues correspondent
+        à une structure mindmap minimale.
+        """
+
+        if not isinstance(data, dict):
+            return False
+
+        if data.get("format") != "node_tree":
+            return False
+
+        if not isinstance(data.get("data"), dict):
+            return False
+
+        return True
 
 
-class MindMapUpdateView(UpdateView):
+class MindMapUpdateView(generic.UpdateView):
     model = MindMap
     fields = ["title"]
     template_name = "mindmap/editor.html"
     success_url = reverse_lazy("mindmap:mindmap-list")
 
     def form_valid(self, form):
-        data = self.request.POST.get("data")
-        if data:
-            form.instance.data = json.loads(data)
-        return super().form_valid(form)
+        raw_data = self.request.POST.get("data")
+
+        if raw_data:
+            try:
+                data = json.loads(raw_data)
+
+                if self.is_valid_mindmap_data(data):
+                    form.instance.data = data
+
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+        response = super().form_valid(form)
+
+        messages.success(
+            self.request,
+            "La carte mentale a été enregistrée."
+        )
+
+        return response
+
+    @staticmethod
+    def is_valid_mindmap_data(data):
+        if not isinstance(data, dict):
+            return False
+
+        if data.get("format") != "node_tree":
+            return False
+
+        if not isinstance(data.get("data"), dict):
+            return False
+
+        return True
 
 
-class MindMapDeleteView(DeleteView):
+class MindMapDeleteView(generic.DeleteView):
     model = MindMap
     template_name = "mindmap/confirm_delete.html"
     success_url = reverse_lazy("mindmap:mindmap-list")
-
 def abaque_devilliers(request):
     result = None
     if request.method == "POST":

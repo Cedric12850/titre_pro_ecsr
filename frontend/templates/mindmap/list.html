@@ -1,32 +1,219 @@
 {% extends "home/base.html" %}
+{% load static %}
 
 {% block title %}Cartes mentales{% endblock %}
 
+
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Cartes mentales</h1>
-    <a href="{% url 'mindmap:mindmap-create' %}" class="btn btn-primary">
-        Nouvelle carte
-    </a>
+<div class="mindmap-list-page">
+
+    <!-- =====================================================
+         EN-TÊTE
+    ====================================================== -->
+
+    <div class="mindmap-list-header">
+
+        <div>
+
+            <span class="mindmap-list-eyebrow">
+                OUTIL PÉDAGOGIQUE
+            </span>
+
+            <h1>
+                Cartes mentales
+            </h1>
+
+            <p>
+                Créez, organisez et structurez vos idées
+                avec l'éditeur de cartes mentales Conduct'Art.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'mindmap:mindmap-create' %}"
+            class="mindmap-create-btn"
+        >
+            <span>＋</span>
+            Nouvelle carte
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTIQUES
+    ====================================================== -->
+
+    <div class="mindmap-list-stats">
+
+        <div class="mindmap-stat-card">
+
+            <span class="mindmap-stat-icon">
+                🧠
+            </span>
+
+            <div>
+
+                <strong>
+                    {{ mindmaps|length }}
+                </strong>
+
+                <span>
+                    carte{{ mindmaps|length|pluralize }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CARTES
+    ====================================================== -->
+
+    {% if mindmaps %}
+
+        <div class="mindmap-grid">
+
+            {% for map in mindmaps %}
+
+                <article class="mindmap-card">
+
+
+                    <!-- Aperçu -->
+
+                    <div class="mindmap-card-preview">
+
+                        <div class="mindmap-preview-root">
+                            {{ map.title|truncatechars:30 }}
+                        </div>
+
+                        <div class="mindmap-preview-line line-1"></div>
+                        <div class="mindmap-preview-line line-2"></div>
+                        <div class="mindmap-preview-line line-3"></div>
+
+                        <div class="mindmap-preview-node node-1">
+                            Idée
+                        </div>
+
+                        <div class="mindmap-preview-node node-2">
+                            Objectif
+                        </div>
+
+                        <div class="mindmap-preview-node node-3">
+                            Ressource
+                        </div>
+
+                    </div>
+
+
+                    <!-- Informations -->
+
+                    <div class="mindmap-card-content">
+
+                        <div class="mindmap-card-title-wrapper">
+
+                            <h2>
+                                {{ map.title }}
+                            </h2>
+
+                            <span class="mindmap-card-badge">
+                                Carte mentale
+                            </span>
+
+                        </div>
+
+
+                        <p class="mindmap-card-date">
+
+                            Dernière modification :
+                            <strong>
+                                {{ map.updated_at|date:"d/m/Y à H:i" }}
+                            </strong>
+
+                        </p>
+
+
+                        <!-- Actions -->
+
+                        <div class="mindmap-card-actions">
+
+                            <a
+                                href="{% url 'mindmap:mindmap-edit' map.pk %}"
+                                class="mindmap-open-btn"
+                            >
+                                Ouvrir
+                                <span>→</span>
+                            </a>
+
+
+                            <a
+                                href="{% url 'mindmap:mindmap-delete' map.pk %}"
+                                class="mindmap-delete-btn"
+                                title="Supprimer cette carte"
+                            >
+                                🗑
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <!-- =================================================
+             ÉTAT VIDE
+        ================================================== -->
+
+        <div class="mindmap-empty">
+
+            <div class="mindmap-empty-icon">
+                🧠
+            </div>
+
+            <h2>
+                Aucune carte mentale
+            </h2>
+
+            <p>
+                Commencez par créer votre première carte mentale
+                pour organiser vos idées, vos cours ou vos ressources
+                pédagogiques.
+            </p>
+
+            <a
+                href="{% url 'mindmap:mindmap-create' %}"
+                class="mindmap-create-btn"
+            >
+                <span>＋</span>
+                Créer ma première carte
+            </a>
+
+        </div>
+
+    {% endif %}
+
 </div>
 
-{% if mindmaps %}
-    <ul class="list-group">
-        {% for map in mindmaps %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{% url 'mindmap:mindmap-edit' map.pk %}">
-                    {{ map.title }}
-                </a>
-                <a href="{% url 'mindmap:mindmap-delete' map.pk %}"
-                   class="btn btn-danger btn-sm">
-                    Supprimer
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Aucune carte mentale pour le moment.</p>
-{% endif %}
+{% endblock content %}
 
-{% endblock %}
+
+{% block extra_js %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/mindmap.css' %}"
+>
+
+{% endblock extra_js %}
